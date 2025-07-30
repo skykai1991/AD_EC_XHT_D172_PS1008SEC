@@ -1,0 +1,133 @@
+//===========================================================================================================
+//   The information contained herein is the exclusive property of Analog & Digital Microelectronics Limited.
+// 
+//   And shall not be distributed, reproduced,or disclosed in whole in part without prior written permission.
+// 
+//       (C) COPYRIGHT 2012   Analog & Digital Microelectronics Limited.                            
+// 
+//                   ALL RIGHTS RESERVED
+// 
+//   The entire notice above must be reproduced on all authorized copies.
+/*===========================================================================================================
+//***********************************************************************************************/
+#include "PS1008.h"
+#include "PS1008_DEF.h"
+#include "setting.h"
+#include <stdio.h>
+#include "charge.h"
+#include "usart.h"
+#include "common.h"
+#include "display_sentence.h"
+#include "smoke.h"
+#include "PS1008_Core.h"
+#include "mic.h"
+//***************************************************************************************************
+__CONFIG(CONFIG0_SET);
+__CONFIG(CONFIG1_SET);
+__CONFIG(CONFIG2_SET);
+__CONFIG(CONFIG3_SET);
+__CONFIG(CONFIG4_SET);
+
+//==============================================================================================
+// ----Function: 主程序
+// --Parameters: None
+// -----Returns: None
+//---------Note:
+//==============================================================================================
+void main(void)
+{
+   F_System_Init();
+   Timer0_Init();
+   Timer1_Init();
+   F_SMK_Init();
+
+   __delay_ms(100);
+   //初始化油量
+   R_OilRest = D_FullOil;
+   R_OilCnt = 0;
+   //计算电池电压和电量
+   F_VADC_Sample_VBAT();
+   F_CalculateEneryPercent();
+   R_Battery_Percent = R_Temp0;
+   R_EngCnt = D_SMOKE_PERCENT_TIME;
+
+   b_PowerOn_Flag = 1; //上电标志
+   F_PlayLight(0);//上电显示
+	R_Sleep_Off = D_8ms_2S;
+   R_ErrFlag.ErrFlag = 0;
+      
+   OSCCON = FINTOSC_1 + CKOE_DIS + OSC_HIGH;
+   WDTEN = 1;
+   M_SMKORIG
+   GIE = 1;
+   while(1)
+   {
+      CLRWDT();
+      if(b_T1_Flag)//1ms 定时
+      {
+         b_T1_Flag = 0;
+         F_MICInput();
+         F_SmokingRV_Det();
+         M_SegTube_Init
+         b_SegTubeScanReq = 1;
+         if(b_SegTubeEn && b_SegTubeScanReq)   F_SegTubeScan();  
+      }
+      if(b_T8ms_Flag)//8ms event
+      {
+         b_T8ms_Flag = 0;
+         F_WorkSmoke();
+         F_PlayLight_8ms();
+         F_WorkCharge();
+         F_RGB_Service_8ms();
+         F_MICInput();
+         if(R_Sleep_Off)R_Sleep_Off--;
+#ifdef _DEBUG_ONLINE_
+         F_DebugOnline();
+#endif
+      }
+      F_AFE_Event();
+      F_Work_PowerOff();
+   }
+}
+
+//中断服务函数
+void interrupt ISR(void)
+{
+#if 0
+   if(AFEIE0 & AFEIF0)
+   {
+
+   }
+   if(AFEIE2 & AFEIF2)
+   {
+
+#ifdef _DEBUG_ONLINE_
+   if((RCIE==1)&&(RCIF==1)) //UART接收的中断
+   {
+      RCIF=0;
+      F_UART_ReceiverISR();
+   }
+#endif
+
+   }
+#endif
+   if((T0IE == 1)&&(T0IF == 1)) //timer0 的中断
+   {
+      T0IF = 0;
+      T0IE = 0;
+      LED_B_OFF
+   } 
+
+   if((T1IE == 1)&&(T1IF == 1)) //timer1 的中断
+   {
+      T1IF = 0;
+      b_T1_Flag = 1;
+      if(!(R_T1_cnt++ & 0x07)) b_T8ms_Flag = 1;
+   } 
+
+   if((PBIE == 1)&&(PBIF == 1)) //PortB 的中断
+   {
+      PBIF =0;
+   }
+}
+

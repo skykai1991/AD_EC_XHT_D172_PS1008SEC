@@ -1,0 +1,24 @@
+{
+"folders": [
+{
+"path": "."
+}
+],
+"settings": {
+    "files.associations": {
+        "ad18f08.h": "c",
+        "periph.h": "c",
+        "commdef.h": "c",
+        "hardwaredef.h": "c",
+        "smoke.h": "c",
+        "ps1008.h": "c",
+        "display_sentence.h": "c",
+        "usart.h": "c",
+        "ps1008_def.h": "c",
+        "setting.h": "c",
+        "charge.h": "c",
+        "common.h": "c",
+        "ps1008_core.h": "c"
+    }
+}
+}
