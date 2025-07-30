@@ -28,8 +28,8 @@ u8  R_T1_cnt = 0;
 u8 R_Battery_Percent;//转成百分比的电池电量值,最大100, 最小0
 u16 R_EngCnt;        //口数对应电量
 /*油量相关变量*/
-u16 R_OilRest ;//吸烟油量计数 颗粒度1s
-u8 R_OilCnt   ; //抽烟秒数
+u8 R_Oil_Percent;//转成百分比的油量值,最大100, 最小0
+u16 R_OilCnt;        //口数对应油量
 
 u16 R_ADC_VBAT;//采集VBAT 的ADC 值
 u32 R_Temp32;
@@ -38,6 +38,7 @@ u16 R_Temp16_1;
 u8 R_Temp0;
 u8 R_Temp1;
 
+u8 R_Mode;//当前模式
 #ifdef _RV_DET_SMKING_
 bit b_CheckRing_Flag;
 #endif
@@ -52,12 +53,12 @@ void F_System_Init(void)
 {
      /* GPIO初始化 PA*/
     TRISA  = SEGTUBE_PA | PB1_SMT_37 | UARTMUX_PB12; //bit[4:0]1：输入 0：输出  bit7:PB1 SMT  BIT6:UART MUX
-    PORTA  = SEGTUBE_PA | RGB_PA; //1：高电平 0低电平
+    PORTA  = SEGTUBE_PA ; //1：高电平 0低电平
 
     /* GPIO初始化 PB*/
-    TRISB   = SEGTUBE_PB | (1 << BIT_KEY) | (1 << BIT_CLK) | (1 << BIT_DAT) | (1 << BIT_OUT) | (0 << BIT_PDRV)/* | (0 << BIT_FANTIS_DAT) | (0 << BIT_FANTIS_EN)*/; //PB口输入1,输出0 模式设置
-    PORTB   = SEGTUBE_PB | (1 << BIT_KEY) | (1 << BIT_CLK) | (1 << BIT_DAT) | (0 << BIT_OUT) | (1 << BIT_PDRV)/* | (0 << BIT_FANTIS_DAT) | (1 << BIT_FANTIS_EN)*/ | RGB_PB; //PB口电平输出
-    PBPU    =  0                          | (1 << BIT_CLK) | (0 << BIT_DAT) | PB7OUT_PU_DIS | PB7OUT_PD_DIS;    //PB0固定300K上拉
+    TRISB   = SEGTUBE_PB | (1 << BIT_VPP) | (0 << BIT_CLK) | (1 << BIT_DAT) | (1 << BIT_KEY) | (1 << BIT_OUT); //PB口输入1,输出0 模式设置
+    PORTB   = SEGTUBE_PB | (1 << BIT_VPP) | (0 << BIT_CLK) | (1 << BIT_DAT) | (1 << BIT_KEY) | (0 << BIT_OUT); //PB口电平输出
+    PBPU    =  0                          | (0 << BIT_CLK) | (0 << BIT_DAT) | (0 << BIT_KEY) | PB7OUT_PU_DIS | PB7OUT_PD_DIS;    //PB0固定300K上拉
                                                     //PB bit[6:1]1：打开上拉 0：关闭上拉 
                                                     //PB7可选上下拉；
                                                     //CLK/DAT在有外部下拉时，不用开内部上拉；

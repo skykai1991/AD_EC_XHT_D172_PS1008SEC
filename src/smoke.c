@@ -23,6 +23,7 @@
 #include "setting.h"
 #include "charge.h"
 #include "PS1008_Core.h"
+#include "PS1008_DEF.h"
 union ByteType_ErrFlag  R_ErrFlag;
 #ifdef _BOMB_INOUT_DETECT_
 bit b_Bomb_Online;		// 1: have bomb  0: no bomb
@@ -99,7 +100,7 @@ void F_SMK_Init(void)
     // LOG_printf1("CONSET = %d \n",CONSET);
 	PMOS_CTRL = 0;
 	// b_HLR_Flag = 0;
-    SCPIE = 1;    //短路保护中断
+    SCPIE = 0;    //短路保护中断
     SCPIF = 0;
     OCPIE = 0;
     OCPIF = 0;
@@ -324,10 +325,11 @@ void F_WorkSmoke(void)
 	if(b_SmokeFlag/* && b_Bomb_Online */)
 	{
 //吸烟油量计算
-		if(++R_OilCnt >= 1000/8)
-		{//计时1s
-			R_OilCnt = 0;
-			if(R_OilRest) R_OilRest--;  //油量计数
+        if(R_OilCnt) R_OilCnt--;
+		if(!R_OilCnt)
+		{
+			R_OilCnt =D_SMOKE_IOL_TIME;
+			if(R_Oil_Percent)R_Oil_Percent--;
 		}
 //吸烟电量计算 每1%吸烟时长5s，电量1%后由欠压判断电量转为0%
 		if(R_EngCnt) R_EngCnt--; 

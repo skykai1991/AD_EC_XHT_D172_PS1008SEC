@@ -34,21 +34,25 @@
 
 //------input pin ------
 
-#define PIN_KEY   PB0
-#define BIT_KEY   0
-#define TRI_KEY   TRISB0
+#define PIN_VPP   PB0
+#define BIT_VPP   0
+#define TRI_VPP   TRISB0
 
 #define PIN_OUT   PB7
 #define BIT_OUT   7
 #define TRI_OUT   TRISB7
 
-#define WAKEUP_PB_PIN   (1 << BIT_KEY)  | (1 << BIT_CLK) | (1 << BIT_DAT)
+#define PIN_KEY   PB6
+#define BIT_KEY   6
+#define TRI_KEY   TRISB6
+
+#define WAKEUP_PB_PIN   (1 << BIT_VPP)  | (1 << BIT_KEY) | (1 << BIT_DAT)
 
 //------out put pin ------
-#define RGB_PA    0x00
-#define RGB_PB    0x10
+// #define RGB_PA    0x00
+// #define RGB_PB    0x10
 
-#define SEGTUBE_PA    0x1F	//PA0~PA4
+#define SEGTUBE_PA    0x17	//PA0,PA1,PA2,PA4
 #define SEGTUBE_PB    0x20	//PB5
 
 // #define PIN_FANTIS_EN   PB6

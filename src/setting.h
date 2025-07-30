@@ -21,12 +21,16 @@
 // #define _DEBUG_EVENT_		//打开debug 打印事件信息模式
 // #define _DEBUG_ONLINE_		//打开在线调试命令
 //以下三种输出模式，三选一；
-// #define _SMOKE_CTRL_CONST_VOLTAGE_	//恒压输出
-#define _SMOKE_CTRL_CONST_RMS_			//恒有效输出
+#define _SMOKE_CTRL_CONST_VOLTAGE_	//恒压输出
+// #define _SMOKE_CTRL_CONST_RMS_			//恒有效输出
 // #define _SMOKE_CTRL_CONST_POWER_		//恒功率输出
 
 #ifdef  _SMOKE_CTRL_CONST_VOLTAGE_
-	#define D_CV_SET	3200000		//恒压值设置，3.2V对应3200000
+	#define D_CV_SET		2900000		//恒压值设置，3.2V对应3200000
+	#define D_CV_SET_1		2800000		
+	#define D_CV_SET_2		2900000		
+	#define D_CV_SET_3		3000000		
+	#define D_CV_SET_PRE	1800000		
 	#define  OPMOD_SET  OPMOD_CONST_VOLTAGE
 #endif
 #ifdef  _SMOKE_CTRL_CONST_RMS_
@@ -41,8 +45,8 @@
 #define CONFIG0_SET  (DEAFULT_CFG0 + FINTOSC_DIV1 + IRST_EN + FCPU_4T + LVR_EN + LVR_22V)
 #define CONFIG1_SET  (DEAFULT_CFG1 + INPUTLEVEL_SMT + ENCRYPT_DIS + DBG_IIC_DIS + DBG_UART_EN + POR_WDT_246MS)
 #define CONFIG2_SET  (DEAFULT_CFG2 + OPMOD_SET + UARTBR_1M + CHGFULL_4V2 + CHGCUR_500MA)
-#define CONFIG3_SET  (DEAFULT_CFG3 + CHG_SMK_EN + MIC_CAP + OTPTEMP_165)
-#define CONFIG4_SET  (DEAFULT_CFG4 + CAP_NORMAL + SMKOT_10S + CAPSENSITIVE_32)
+#define CONFIG3_SET  (DEAFULT_CFG3 + CHG_SMK_DIS + MIC_CAP + OTPTEMP_165)
+#define CONFIG4_SET  (DEAFULT_CFG4 + CAP_NORMAL + SMKOT_8S + CAPSENSITIVE_32)
 
 
 
@@ -53,6 +57,7 @@
 #define _RV_DET_SMKING_
 //以下配置吸烟电量几少减1%；
 #define D_SMOKE_PERCENT_TIME	D_8ms_5S
+#define D_SMOKE_IOL_TIME	    11100/8    // 1% 的油量
 
 //以下上电及充电时电池电量曲线；
 #define V_WORKVOLTAGE    3200
@@ -60,7 +65,7 @@
 #define V_BAT2VCC		 40	         //BAT与VCC串联电阻压降补偿
 
 #define V_BATFULL        4120       // 满电电压 4.12V - 99%
-#define Percent_Full     99			// 满电电量百分比
+#define Percent_Full     100			// 满电电量百分比
 
 #define V_FirStage       3950       //一档电压3.95V - 90%
 #define Percent_FirStage 90			//一档电量百分比

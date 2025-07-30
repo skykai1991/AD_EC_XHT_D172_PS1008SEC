@@ -69,10 +69,8 @@ LOG_printf0("MIC ON\n");
             {                      //mic off
                 if(b_SmokeFlag)
                 {
-                     b_SmokeFlag = 0;
-              // F_PlayLight(2);
-                     R_Light_LoopTimes = 1;
-            
+                    b_SmokeFlag = 0;
+                    F_PlayLight(2);
 #ifdef _DEBUG_EVENT_
 LOG_printf0("MIC OFF\n");
 #endif
@@ -82,6 +80,13 @@ LOG_printf0("MIC OFF\n");
         }
     }
 }
+
+
+
+
+
+
+
 
 
 

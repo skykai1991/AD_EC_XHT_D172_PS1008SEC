@@ -32,8 +32,6 @@ void F_PlayLight(u8 LightIdx)
 	b_SegTubeEn = 0;
 	M_SegTube_Init
 	R_Light_Time_Cnt = 0;
-	LED_OFF
-
 	R_Light_Idx = LightIdx;
 	R_Light_Cnt = 0;
 	b_LightPlay_Flag = 1;
@@ -44,25 +42,43 @@ LOG_printf1("F_PlayLight,%d\r\n",R_Light_Idx);
 }
 void F_SegTubeDecode(void)
 {
-	u8 R_Temp0,R_Temp1,R_Temp2;
+	u8 R_Temp0,R_Temp1,i;
 	R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
 	R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-	R_Temp2 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-	if(R_Temp1 == OIL_BY_REG)
+ 
+	R_Lcd_Buf0.buf = R_Temp0;   // 显示图标
+    // 显示数字
+    if(R_Temp1 == NUM_BY_Bat) //显示电池电量
     {
-		if(R_OilRest > 3*D_FullOil/4) R_Temp1 = 4;
-		else if(R_OilRest > 2*D_FullOil/4) R_Temp1 = 3;
-		else if(R_OilRest > 1*D_FullOil/4) R_Temp1 = 2;
-		else if(R_OilRest >0) R_Temp1 = 1;
-		else R_Temp1 = 0;
+        R_Temp1 = R_Battery_Percent;
     }
-	   
-    if(R_Temp2 == NUM_OFF) R_Temp2 = 0xFF;
-    else if(R_Temp2 == NUM_BY_REG)
+	else if(R_Temp1 == NUM_BY_Oil) //显示油量
+	{
+		R_Temp1 = R_Oil_Percent;
+	}
+	else if(R_Temp1 == NUM_BY_Mode) //显示挡位
     {
-        R_Temp2 = R_Battery_Percent;
-    }			
-	F_ShowSegTube(R_Temp0,R_Temp1,R_Temp2);
+		R_Temp1 = R_Mode;
+    }
+	i=0;  
+	if(R_Temp1 >99)
+    {
+		R_Lcd_Buf0.buf |= ICON_100;
+        M_Show_Tenbit(10)
+        M_Show_Unitbit(10)
+    }
+    else
+    {
+        while(R_Temp1>=10)
+        {
+            R_Temp1 -=10;
+            i++;
+        }
+        if(i == 0)i=10;     //十位灭0处理；
+        M_Show_Tenbit(i)
+        M_Show_Unitbit(R_Temp1)
+    }
+   
 	b_SegTubeEn = 1;
 
 }
@@ -71,25 +87,9 @@ void F_PlayLight_8ms(void)
 	if((R_Light_Time_Cnt) && (R_Light_Time_Cnt != 0x1fff)) R_Light_Time_Cnt--;
 	if(b_LightPlay_Flag && (!R_Light_Time_Cnt))
 	{
-		u8 R_Temp0,R_Temp1,R_Temp2,R_Temp3;
+		u8 R_Temp0,R_Temp1;
 		switch(*(LightTab[R_Light_Idx] + R_Light_Cnt++))
 		{
-			case SEGTUBE_LED:
-				R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-				R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-                R_Light_Time_Cnt = (u16)R_Temp0 << 8 | R_Temp1;
-				F_SegTubeDecode();
-
-				R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-				R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-				R_Temp2 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-				R_Temp3 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-				if(R_Temp0)
-				{
-					LED_ON(R_Temp0,R_Temp1,R_Temp2,R_Temp3)
-				}
-			break;
-
 			case SEGTUBE_SET:
 				R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
 				R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
@@ -106,13 +106,13 @@ void F_PlayLight_8ms(void)
 				M_SegTube_Init
 			break;
 
-			// case NIXTETUBE_FULLSCREEN:
-			// 	R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-			// 	R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
-			// 	R_Light_Time_Cnt = (u16)R_Temp0 << 8 | R_Temp1;
-            //     M_FufillPanel
-			// 	b_SegTubeEn = 1;
-			// break;
+			case NIXTETUBE_FULLSCREEN:
+				R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
+				R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
+				R_Light_Time_Cnt = (u16)R_Temp0 << 8 | R_Temp1;
+                M_FufillPanel
+				b_SegTubeEn = 1;
+			break;
 			case FLASHICON_SET:
 				R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
 				R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
@@ -135,13 +135,8 @@ void F_PlayLight_8ms(void)
 			case DISPLAY_END:
 				b_LightPlay_Flag = 0;
 				b_SegTubeEn = 0;
-				LED_OFF
 				// M_ClearPanel
 				M_SegTube_Init
-				if(R_Light_Idx == 1)	// 抽烟灯效结束
-				{
-					b_SmokeFlag = 0;
-				}
 			break;
 			default:	
 			break;
@@ -155,7 +150,6 @@ void F_StopLight(void)
 	b_SegTubeEn =0;
 	R_Light_Time_Cnt = 0;
 	M_SegTube_Init
-	LED_OFF
 }
 
 

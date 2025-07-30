@@ -41,8 +41,10 @@ extern u8  R_T1_cnt;
 extern u8 R_Battery_Percent;//转成百分比的电池电量值,最大100, 最小0
 extern u16 R_EngCnt;        //口数对应电量
 /*油量相关变量*/
-extern u16 R_OilRest;//吸烟油量计数 颗粒度1s
-extern u8 R_OilCnt; //抽烟秒数
+// extern u16 R_OilRest;//吸烟油量计数 颗粒度1s
+// extern u8 R_OilCnt; //抽烟秒数
+u8 R_Oil_Percent;//转成百分比的油量值,最大100, 最小0
+u16 R_OilCnt;        //口数对应油量
 
 #ifdef _RV_DET_SMKING_
 extern bit b_CheckRing_Flag;
@@ -59,7 +61,7 @@ extern u16 R_Temp16_0;
 extern u16 R_Temp16_1;
 extern u8 R_Temp0;
 extern u8 R_Temp1;
-
+extern u8 R_Mode;//当前模式
 
 
 unsigned int F_ADC2VBAT(unsigned int voltage);

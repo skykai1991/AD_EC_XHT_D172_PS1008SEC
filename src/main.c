@@ -43,8 +43,8 @@ void main(void)
 
    __delay_ms(100);
    //初始化油量
-   R_OilRest = D_FullOil;
-   R_OilCnt = 0;
+   R_Oil_Percent = 100;
+   R_OilCnt = D_SMOKE_IOL_TIME;
    //计算电池电压和电量
    F_VADC_Sample_VBAT();
    F_CalculateEneryPercent();
@@ -78,8 +78,6 @@ void main(void)
          F_WorkSmoke();
          F_PlayLight_8ms();
          F_WorkCharge();
-         F_RGB_Service_8ms();
-         F_MICInput();
          if(R_Sleep_Off)R_Sleep_Off--;
 #ifdef _DEBUG_ONLINE_
          F_DebugOnline();
@@ -115,7 +113,6 @@ void interrupt ISR(void)
    {
       T0IF = 0;
       T0IE = 0;
-      LED_B_OFF
    } 
 
    if((T1IE == 1)&&(T1IF == 1)) //timer1 的中断

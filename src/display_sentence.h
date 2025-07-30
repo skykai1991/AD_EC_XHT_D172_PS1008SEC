@@ -22,38 +22,35 @@
 #include "common.h"
 #include <stdio.h>
 #include "segtube.h"
-#include "rgb_led.h"
 
 // ===========RGB MODE定义===========
-#define SEGTUBE_LED          0X07       //数码管模式
+#define SEGTUBE_LED           0X07       //数码管模式
 #define SEGTUBE_SET           0x08        //(油量外框，闪电，百分号)
-#define SEGTUBE_SCREENOFF     0x0A       //灭全屏模式
-// #define NIXTETUBE_FULLSCREEN    0x0B       //显全屏模式
+#define SEGTUBE_SCREENOFF       0x0A       //灭全屏模式
+#define NIXTETUBE_FULLSCREEN    0x0B       //显全屏模式
 #define FLASHICON_SET           0x0C        //(油量外框，闪电，百分号)
 #define LOOP_START              0x10
 #define LOOP_END                0x11
 #define DISPLAY_END             0x80       //灯效停止
 
-#define NUM_OFF         0xFF
+#define NUM_OFF            0xFF   // 不显示
 // #define NUM_ALL         0xEE
-#define NUM_BY_REG      0xFE        //电量由R_Battery_Percent决定;
-#define OIL_BY_REG      0xFE        //油量由R_OilLevel决定；
-// #define NUM_BY_STEP     0XC
+// #define NUM_BY_REG      0xFE        //电量由R_Battery_Percent决定;
+// #define OIL_BY_REG      0xFE        //油量由R_OilLevel决定；
+#define NUM_BY_Bat         0xFA   // 显示电量
+#define NUM_BY_Oil         0xFB   // 显示油量
+#define NUM_BY_Mode        0xFC   // 显示挡位
 
-#define ICON_FLA     0x01
-#define ICON_PER     0x02
-#define ICON_CY1     0x04
-#define ICON_CY2     0x08
-#define ICON_CY3     0x10
-#define ICON_CY4     0x20
-#define ICON_CY5     0x40
-#define ICON_CYCLE   0x7C
-#define ICON_ALL      0x7f
 
-#define M_SHOW_NUM_LED(icon,oil,num,color,ontime,offtime,cycle,time)  SEGTUBE_LED,(time>>11),((time>>3)&0x0FF),icon,oil,num,color,(ontime/8),(offtime/8),cycle
-#define M_SHOW_NUM(icon,oil,num,time)           SEGTUBE_SET,(time>>11),((time>>3)&0x0FF),icon,oil,num     //flag bit0:bit1;bit2 = H1_flash:H2_percent:K5~K9_oil_cycle; 
-#define M_SEGTUBE_SCREENOFF(time)     SEGTUBE_SCREENOFF,(time>>11),((time>>3)&0x0FF)
-// #define M_NIXTETUBE_FULLSCREEN(time)    NIXTETUBE_FULLSCREEN,(time>>11),((time>>3)&0x0FF)
+#define ICON_100     0x03
+#define ICON_Bat     0x04
+#define ICON_Oil     0x08
+#define ICON_PCT     0x10
+
+
+#define M_SHOW_NUM(icon,num,time)   SEGTUBE_SET,(time>>11),((time>>3)&0x0FF),icon,num     
+#define M_SEGTUBE_SCREENOFF(time)       SEGTUBE_SCREENOFF,(time>>11),((time>>3)&0x0FF)
+#define M_NIXTETUBE_FULLSCREEN(time)    NIXTETUBE_FULLSCREEN,(time>>11),((time>>3)&0x0FF)
 #define M_FLASHSET(icon,time)           FLASHICON_SET,(time>>11),((time>>3)&0x0FF),icon     //flag bit0:bit1;bit2 = H1_flash:H2_percent:K5~K9_oil_cycle; 
 #define M_LOOP_START(times)             LOOP_START,times             
 #define M_LOOP_END                      LOOP_END 
