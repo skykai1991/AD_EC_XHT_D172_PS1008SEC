@@ -83,6 +83,7 @@ void main(void)
          F_WorkCharge();
          if(R_Sleep_Off)R_Sleep_Off--;
          if(b_SmokeShortDelayTime)b_SmokeShortDelayTime--;
+         if(R_InputKeyRepeatTime)R_InputKeyRepeatTime--;
       }
       F_AFE_Event();
       F_Work_PowerOff();

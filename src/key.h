@@ -1,12 +1,13 @@
 #ifndef __KEY_H__
 #define __KEY_H__
-
+#include "commdef.h"
 #include "PS1008.h"
 // #define M_KEY_INT {b_InputRecord_LastKEY = b_InputCurrentKEY = 0;}
 
-void F_KEYInput(void);
-
+extern void F_KEYInput(void);
+extern void F_ChangeMode(void);
 // extern bit b_InputRecord_LastKEY;
 // extern bit b_InputCurrentKEY;
 extern bit blockFlag;
+extern  u8 R_InputKeyRepeatTime; 
 #endif

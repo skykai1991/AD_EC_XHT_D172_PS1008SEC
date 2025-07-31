@@ -8,6 +8,8 @@
 #include "HardwareDef.h"
 #include "common.h"
 #include "display_sentence.h"
+#include "setting.h"
+#include "PS1008_Core.h"
 bit b_InputCurrentKEY = 0;   //单次扫描当前状态
 bit b_InputLastKEY = 0;      //单次扫描上次状态
 bit b_InputRecordKEY = 0;    //消抖后，按键的状态记录
@@ -82,13 +84,13 @@ void F_KEYInput(void)
                 //     F_StopSmoke();
 			    //     F_PlayLight(2);
                 // }
-                // // else if(bChangePower)
-                // // {
-                // //     if(bCurrentPowerLevel<2) bCurrentPowerLevel++;
-                // //     else bCurrentPowerLevel =0;
+                // else if(bChangePower)
+                // {
+                //     if(bCurrentPowerLevel<2) bCurrentPowerLevel++;
+                //     else bCurrentPowerLevel =0;
 
-                // //     F_PlayLight(7);
-                // // }
+                //     F_PlayLight(7);
+                // }
                 // else if((blockFlag ==0)&& (R_InputKeyRepeatCount<5))
                 // {
                 //      F_MicON(); 
@@ -97,7 +99,28 @@ void F_KEYInput(void)
   //--------------------------------------------------------------   
         }
     }
+
+    F_ChangeMode();
+
 }
+
+void F_ChangeMode(void)
+{
+    if((!R_InputKeyRepeatTime)&&(R_InputKeyRepeatCount ==3))  // 调节挡位
+    { 
+       R_InputKeyRepeatCount =0;
+       R_Mode++;
+       if(R_Mode >3) R_Mode =1;
+       F_PlayLight(12);  // 显示挡位
+
+       // 调节输出电压
+       	R_Temp16_0 = MTP_INFO_RD(0x0B);
+       if(R_Mode==1)  CONSET = ((u32)D_CV_SET_1 / R_Temp16_0) / 2;
+       else if(R_Mode ==2) CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
+       else if(R_Mode ==3) CONSET = ((u32)D_CV_SET_3 / R_Temp16_0) / 2;
+    }
+}
+
 
 void F_PreHeat(void)
 {
