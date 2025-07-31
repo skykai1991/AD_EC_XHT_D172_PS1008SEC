@@ -79,6 +79,7 @@ void main(void)
          F_PlayLight_8ms();
          F_WorkCharge();
          if(R_Sleep_Off)R_Sleep_Off--;
+         if(b_SmokeShortDelayTime)b_SmokeShortDelayTime--;
       }
       F_AFE_Event();
       F_Work_PowerOff();

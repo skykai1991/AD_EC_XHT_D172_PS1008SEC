@@ -29,6 +29,7 @@ union ByteType_ErrFlag  R_ErrFlag;
 bit b_Bomb_Online;		// 1: have bomb  0: no bomb
 #endif
 bit b_SmokeFlag;		// 1:smoking     0:not smoke;
+unsigned char b_SmokeShortDelayTime=0;	
 // bit b_HLR_Flag=0;
 void F_SMK_Init(void)
 {
@@ -104,17 +105,25 @@ void F_SMK_Init(void)
     SCPIF = 0;
     OCPIE = 0;
     OCPIF = 0;
-	
-
 }
+unsigned char AFEIF0Buffer = 0;
+unsigned char AFEIF1Buffer = 0;
 void F_AFE_Event(void)
 {
 	//AFEIF0 查询处理
 	if(AFEIF0)
 	{
-		if (SCPIF)
+	AFEIF0Buffer = AFEIF0;
+	AFEIF0 = 0;
+    F_DebugUart_Dis();      
+    usart_init();           
+    printf("AFEIF0=%x,\n",AFEIF0Buffer);   
+    F_DebugUart_En();
+		// if (SCPIF)
+		if(AFEIF0Buffer&0x80)
 		{
 			SCPIF = 0;
+			b_SmokeShortDelayTime =D_8ms_2S;
 			F_PlayLight(5);
 #ifdef _DEBUG_EVENT_
 LOG_printf0("short before smk\n");
@@ -122,20 +131,27 @@ LOG_printf0("short before smk\n");
 			return;
 		}
 
-		if(OCPIF)
+		// if(OCPIF)
+		if(AFEIF0Buffer&0x40)
 		{
 			OCPIF = 0;
+			b_SmokeShortDelayTime =D_8ms_2S;
 			F_PlayLight(5);
 			return;
 		}
 		
-		if(UVPIF)
+		// if(UVPIF)
+		if(AFEIF0Buffer&0x20)
 		{
 			UVPIF = 0;
+			if(b_SmokeShortDelayTime) // 短路之后延时判断低电
+			{
+				return;
+			}
 			R_Battery_Percent = 0;
 			b_SmokeFlag = 0;
-			PWMCLKEN=1;
-			PMOS_CTRL = 1;
+			// PWMCLKEN=1;
+			// PMOS_CTRL = 1;
 			// if(R_ErrFlag.LB == 0)
 			// {
 			R_ErrFlag.LB = 1;
@@ -154,7 +170,8 @@ LOG_printf0("lowbat\n");
 	//    LOG_printf0("over temperate\n");
 	// #endif
 	// 	}
-		else if(SMKTMOIF)
+		// else if(SMKTMOIF)
+		else if(AFEIF0Buffer&0x04)
 		{
 			SMKTMOIF = 0;
 			b_SmokeFlag = 0;
@@ -165,7 +182,8 @@ LOG_printf0("lowbat\n");
 LOG_printf0("smk overtime\n");
 #endif
 		}
-		else if(SMKOVERIF)
+		// else if(SMKOVERIF)
+		else  if(AFEIF0Buffer&0x02)
 		{
 			SMKOVERIF = 0;
 // 			if(b_SmokeFlag && (b_PowerOn_Flag != 0x5A))
@@ -179,7 +197,8 @@ LOG_printf0("smk overtime\n");
 // 			}
 
 		}
-		else if(CAPSTARTIE) 
+		// else if(CAPSTARTIE) 
+		else if(AFEIF0Buffer&0x01)
 		{
 			CAPSTARTIE = 0;
 // #ifdef _DEBUG_EVENT_
@@ -219,9 +238,17 @@ LOG_printf0("smk overtime\n");
 	}
 	
 //AFEIF1 查询处理
-	if(AFEIF1)
-	{
-		if(CHGINIF)
+	if(AFEIF1&0x7d)
+	{		    
+
+			AFEIF1Buffer = AFEIF1&0x7d;
+			AFEIF1 = 0;
+			F_DebugUart_Dis();      
+			usart_init();           
+			printf("               AFEIF1=%x,\n", AFEIF1Buffer);   
+			F_DebugUart_En();
+		// if(CHGINIF)
+		if(AFEIF1Buffer&0x08)
 		{
 			CHGINIF =0;
 			Recharge(0);
@@ -238,7 +265,8 @@ LOG_printf0("smk overtime\n");
 				if(!b_SmokeFlag) F_PlayLight(8);
 			}	
 		}
-		else if(CHGFULLIF) //充满 
+		// else if(CHGFULLIF) //充满 
+		else if(AFEIF1Buffer&0x04)
 		{
 			CHGFULLIF =0;
 			Recharge(1);
@@ -249,7 +277,8 @@ LOG_printf0("smk overtime\n");
 				if(!b_SmokeFlag) F_PlayLight(8);				
 			}
 		}
-		else if(CHGRMVIF) // USB拔出
+		// else if(CHGRMVIF) // USB拔出
+		else if(AFEIF1Buffer&0x01)
 		{
 			CHGRMVIF =0;
 			Recharge(0);
@@ -257,7 +286,8 @@ LOG_printf0("smk overtime\n");
 			if(!b_SmokeFlag) F_PlayLight(7);
 		}
 
-		if(CIGINIF)
+		// if(CIGINIF)
+		if(AFEIF1Buffer&0x10)
 		{
 			CIGINIF = 0;
 			CIGPUR= 0;  
@@ -269,7 +299,8 @@ LOG_printf0("smk overtime\n");
 // #endif
 #endif
 		}
-		else if(CIGRMVIF)
+		// else if(CIGRMVIF)
+		else if(AFEIF1Buffer&0x20)
 		{
 			CIGRMVIF = 0;
 			CIGPUR= 1; 
@@ -388,10 +419,11 @@ void F_SmokingRV_Det(void)
 						R_Temp16_1 = MTP_INFO_RD(0x0D);
 						R_KMOS = (unsigned long)R_Temp16_0*1000/R_Temp16_1;
 						Res_OUT=(unsigned long)R_VADC_Vout*R_KMOS/R_CADC_MOS;//计算当前外部电阻值(单位：mΩ)
-		// #ifdef _DEBUG_EVENT_
-		// LOG_printf3("V=%d,I=%d,R=%d\r\n",R_VADC_Vout,R_CADC_MOS,Res_OUT);
-		// #endif
-						if(Res_OUT < 900)				//低阻
+		    // F_DebugUart_Dis();      
+			// usart_init();           
+			// printf("V=%d,I=%d,R=%d\r\n",R_VADC_Vout,R_CADC_MOS,Res_OUT);   
+			// F_DebugUart_En();
+						if(Res_OUT < 750)				//低阻
 						{
 							b_SmokeFlag = 0;
 							PWMCLKEN=1;
@@ -399,6 +431,7 @@ void F_SmokingRV_Det(void)
 							R_ErrFlag.LZ = 1;
 							// b_HLR_Flag = 1;
 							F_PlayLight(5);
+							b_SmokeShortDelayTime =D_8ms_2S;
 	#ifdef _DEBUG_EVENT_
 	LOG_printf3("V=%d,I=%d,R=%d\r\n",R_VADC_Vout,R_CADC_MOS,Res_OUT);
 	#endif

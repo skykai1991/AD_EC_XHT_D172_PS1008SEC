@@ -38,7 +38,7 @@ typedef union ByteType_ErrFlag{		//共用体变量类型（8bit）
 #ifdef _BOMB_INOUT_DETECT_
 extern bit b_Bomb_Online;		// 1: have bomb  0: no bomb
 #endif
-
+extern unsigned char b_SmokeShortDelayTime;	
 extern bit b_SmokeFlag;			// 1:smoking     0:not smoke
 // extern bit b_HLR_Flag;
 extern union ByteType_ErrFlag  R_ErrFlag;

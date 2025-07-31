@@ -65,7 +65,7 @@ void F_System_Init(void)
 }
 void F_Work_PowerOff(void)
 {
-    if((R_Sleep_Off || b_SmokeFlag || b_ChargeFlag || b_LightPlay_Flag || SMKINGS)) return;
+    if((R_Sleep_Off||b_SmokeShortDelayTime || b_SmokeFlag || b_ChargeFlag || b_LightPlay_Flag || SMKINGS)) return;
     // if(b_PowerOn_Flag == 1)
     // {
     //     b_PowerOn_Flag = 0;

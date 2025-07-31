@@ -28,7 +28,6 @@ extern  const u8* LightTab[16];
 // ==================================
 void F_PlayLight(u8 LightIdx)
 {
-	if(b_LightPlay_Flag && R_Light_Idx == 5)return;	//短路灯效中不允许打断；
 	b_SegTubeEn = 0;
 	M_SegTube_Init
 	R_Light_Time_Cnt = 0;

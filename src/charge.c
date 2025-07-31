@@ -48,6 +48,7 @@ void F_WorkCharge(void)
 				if(R_Temp0 > R_Battery_Percent)
 				{
 					R_Battery_Percent++;
+					R_OilCnt =D_SMOKE_IOL_TIME;
 					if(R_Battery_Percent == 1) 
 					{
 						PWMCLKEN=1;
@@ -63,6 +64,7 @@ void F_WorkCharge(void)
 				if((F_ADC2VBAT(R_ADC_VBAT) > 4200 ) || (++R_ChargingTimes >= D_Time_1PCT))			//10s *12 = 2minutes。充至91%后，每2分钟增加1%至满电；
 				{
 					R_Battery_Percent++;
+					R_OilCnt =D_SMOKE_IOL_TIME;
 					R_ChargingTimes = 0; 
 				}
 				if(R_Battery_Percent >= Percent_Full)
