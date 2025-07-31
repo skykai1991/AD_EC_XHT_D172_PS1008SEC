@@ -79,9 +79,6 @@ void main(void)
          F_PlayLight_8ms();
          F_WorkCharge();
          if(R_Sleep_Off)R_Sleep_Off--;
-#ifdef _DEBUG_ONLINE_
-         F_DebugOnline();
-#endif
       }
       F_AFE_Event();
       F_Work_PowerOff();

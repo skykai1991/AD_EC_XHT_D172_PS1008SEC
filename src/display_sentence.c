@@ -38,7 +38,10 @@ void F_PlayLight(u8 LightIdx)
 #ifdef _DEBUG_EVENT_
 LOG_printf1("F_PlayLight,%d\r\n",R_Light_Idx);
 #endif
-	// F_PlayLight_8ms();
+	F_DebugUart_Dis();      
+    usart_init();           
+    printf("F_PlayLight,%d\r\n",R_Light_Idx);   
+    F_DebugUart_En();
 }
 void F_SegTubeDecode(void)
 {
@@ -64,8 +67,8 @@ void F_SegTubeDecode(void)
 	if(R_Temp1 >99)
     {
 		R_Lcd_Buf0.buf |= ICON_100;
-        M_Show_Tenbit(10)
-        M_Show_Unitbit(10)
+        M_Show_Tenbit(0)
+        M_Show_Unitbit(0)
     }
     else
     {

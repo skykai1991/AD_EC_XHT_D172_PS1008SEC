@@ -221,9 +221,9 @@ LOG_printf0("smk overtime\n");
 //AFEIF1 查询处理
 	if(AFEIF1)
 	{
-		if(CIGINIF)
+		if(CHGINIF)
 		{
-			CIGINIF =0;
+			CHGINIF =0;
 			Recharge(0);
 			if(R_Battery_Percent < Percent_Full)	//充电插入
 			{
@@ -238,7 +238,7 @@ LOG_printf0("smk overtime\n");
 				if(!b_SmokeFlag) F_PlayLight(8);
 			}	
 		}
-		else if(CHGFULLIF)
+		else if(CHGFULLIF) //充满 
 		{
 			CHGFULLIF =0;
 			Recharge(1);
@@ -249,9 +249,9 @@ LOG_printf0("smk overtime\n");
 				if(!b_SmokeFlag) F_PlayLight(8);				
 			}
 		}
-		else if(CIGRMVIF)
+		else if(CHGRMVIF) // USB拔出
 		{
-			CIGRMVIF =0;
+			CHGRMVIF =0;
 			Recharge(0);
 			b_ChargeFlag =0;
 			if(!b_SmokeFlag) F_PlayLight(7);
@@ -259,7 +259,7 @@ LOG_printf0("smk overtime\n");
 
 		if(CIGINIF)
 		{
-			CIGINIF = CIGRMVIF = 0;
+			CIGINIF = 0;
 			CIGPUR= 0;  
 #ifdef _BOMB_INOUT_DETECT_
 			b_Bomb_Online = 1;
@@ -271,7 +271,7 @@ LOG_printf0("smk overtime\n");
 		}
 		else if(CIGRMVIF)
 		{
-			CIGINIF = CIGRMVIF = 0;
+			CIGRMVIF = 0;
 			CIGPUR= 1; 
 #ifdef _BOMB_INOUT_DETECT_
 			b_Bomb_Online = 0;
@@ -376,13 +376,13 @@ void F_SmokingRV_Det(void)
 					R_VADC_Vout =(((VADCH&0x01) <<8)|VADCL);//读取ADC采集值  >>1
 					R_CADC_MOS =((CADCH &0x01)  <<8)|CADCL;//读取流过PMOS的电流值
 					// if(!(R_VADC_Vout && R_CADC_MOS)) return;
-					if(R_CADC_MOS < 30)
+					if(R_CADC_MOS < 50)
 					{					//负载开路
 	#ifdef _DEBUG_EVENT_
 	LOG_printf0("load open\r\n");	
 	#endif
 					}
-					else if(R_VADC_Vout > 30)		//无极小VOUT,ADC正常
+					else if(R_VADC_Vout > 50)		//无极小VOUT,ADC正常
 					{
 						R_Temp16_0 = MTP_INFO_RD(0x0B);
 						R_Temp16_1 = MTP_INFO_RD(0x0D);
@@ -404,6 +404,7 @@ void F_SmokingRV_Det(void)
 	#endif
 							return;
 						}
+						#if 0
 						else if(Res_OUT > 1500)			//高阻
 						{
 							b_SmokeFlag = 0;
@@ -417,14 +418,15 @@ void F_SmokingRV_Det(void)
 	#endif
 							return;
 						}
+						#endif
 
 					}
-
-					// AFECLKEN      =1;   //ADC采集必须打开AFECLK******
+					AFECLKEN      =1;   //ADC采集必须打开AFECLK******
 					VADIF = 0;
 					CADIF = 0;
     				ADCON = ADCMOD_CADC_FOLLOW | VDAC1_SEL_VBAT | ADCSP_15MS | ADCMUX_V1C1 | ADC_GO;
 					b_CheckRing_Flag = 1;
+
 				}
 				else if((ADCON & 0x30) == 0x10)		//检测VBAT电压
 				{
@@ -432,12 +434,14 @@ void F_SmokingRV_Det(void)
 					VADIF = 0;
 					b_CheckRing_Flag = 0;
 					R_VADC_BAT =(((VADCH&0x01) <<8)|VADCL);//读取ADC采集值  >>1
+					#if 0
 					if (F_ADC2VBAT(R_VADC_BAT) < 3000)		//吸烟中低电
 					{
 		#ifdef _DEBUG_EVENT_
 		LOG_printf0("lowbat\r\n");
 		#endif
 					}
+					#endif
 					
 
 					VADIF = 0;
