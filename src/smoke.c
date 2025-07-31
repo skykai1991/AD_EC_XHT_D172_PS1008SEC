@@ -24,6 +24,7 @@
 #include "charge.h"
 #include "PS1008_Core.h"
 #include "PS1008_DEF.h"
+#include "key.h"
 union ByteType_ErrFlag  R_ErrFlag;
 #ifdef _BOMB_INOUT_DETECT_
 bit b_Bomb_Online;		// 1: have bomb  0: no bomb
@@ -113,126 +114,142 @@ void F_AFE_Event(void)
 	//AFEIF0 查询处理
 	if(AFEIF0)
 	{
-	AFEIF0Buffer = AFEIF0;
-	AFEIF0 = 0;
-    F_DebugUart_Dis();      
-    usart_init();           
-    printf("AFEIF0=%x,\n",AFEIF0Buffer);   
-    F_DebugUart_En();
-		// if (SCPIF)
-		if(AFEIF0Buffer&0x80)
+		AFEIF0Buffer = AFEIF0;
+		AFEIF0 = 0;
+		if(blockFlag)
 		{
-			SCPIF = 0;
-			b_SmokeShortDelayTime =D_8ms_2S;
-			F_PlayLight(5);
-#ifdef _DEBUG_EVENT_
-LOG_printf0("short before smk\n");
-#endif
-			return;
+			AFEIF0 =0;
+			PWMCLKEN=1;
+			PMOS_CTRL = 1; //关MOS	
 		}
-
-		// if(OCPIF)
-		if(AFEIF0Buffer&0x40)
+		else
 		{
-			OCPIF = 0;
-			b_SmokeShortDelayTime =D_8ms_2S;
-			F_PlayLight(5);
-			return;
-		}
+			if(R_ErrFlag.ErrFlag == 0 )
+			{
+				PWMCLKEN=1;
+				PMOS_CTRL = 0; //开MOS
+			}
 		
-		// if(UVPIF)
-		if(AFEIF0Buffer&0x20)
-		{
-			UVPIF = 0;
-			if(b_SmokeShortDelayTime) // 短路之后延时判断低电
+
+		F_DebugUart_Dis();      
+		usart_init();           
+		printf("AFEIF0=%x,\n",AFEIF0Buffer);   
+		F_DebugUart_En();
+			// if (SCPIF)
+			if(AFEIF0Buffer&0x80)
 			{
+				SCPIF = 0;
+				b_SmokeShortDelayTime =D_8ms_2S;
+				F_PlayLight(5);
+	#ifdef _DEBUG_EVENT_
+	LOG_printf0("short before smk\n");
+	#endif
 				return;
 			}
-			R_Battery_Percent = 0;
-			b_SmokeFlag = 0;
-			// PWMCLKEN=1;
-			// PMOS_CTRL = 1;
-			// if(R_ErrFlag.LB == 0)
-			// {
-			R_ErrFlag.LB = 1;
-			F_PlayLight(4);
-			// }
-#ifdef _DEBUG_EVENT_
-LOG_printf0("lowbat\n");
-#endif
-		}
-	// 	else if (OTPIF)
-	// 	{
-	// 		AFEIF0 = 0;
-	// 		b_SmokeFlag = 0;
-	// 		// F_PlayLight(0);
-	// #ifdef _DEBUG_EVENT_
-	//    LOG_printf0("over temperate\n");
-	// #endif
-	// 	}
-		// else if(SMKTMOIF)
-		else if(AFEIF0Buffer&0x04)
-		{
-			SMKTMOIF = 0;
-			b_SmokeFlag = 0;
-			// PWMCLKEN=1;
-			// PMOS_CTRL = 1;
-			F_PlayLight(3);
-#ifdef _DEBUG_EVENT_
-LOG_printf0("smk overtime\n");
-#endif
-		}
-		// else if(SMKOVERIF)
-		else  if(AFEIF0Buffer&0x02)
-		{
-			SMKOVERIF = 0;
-// 			if(b_SmokeFlag && (b_PowerOn_Flag != 0x5A))
-// 			{
-// 			// F_PlayLight(2);
-// 				R_Light_LoopTimes = 1;
-// 				b_SmokeFlag = 0;
-// #ifdef _DEBUG_EVENT_
-// LOG_printf0("MIC OFF\n");
-// #endif
-// 			}
 
-		}
-		// else if(CAPSTARTIE) 
-		else if(AFEIF0Buffer&0x01)
-		{
-			CAPSTARTIE = 0;
-// #ifdef _DEBUG_EVENT_
-// LOG_printf0("SMKSTARTIF\n");
-// #endif
-
-#ifdef _BOMB_INOUT_DETECT_
-			if(b_Bomb_Online == 0)		//吸烟前开路
+			// if(OCPIF)
+			if(AFEIF0Buffer&0x40)
 			{
-				F_PlayLight(9);		//开路灯效
-				PMOS_CTRL = 1;
-				R_ErrFlag.OPEN = 1;
+				OCPIF = 0;
+				b_SmokeShortDelayTime =D_8ms_2S;
+				F_PlayLight(5);
 				return;
 			}
-			else
+			
+			// if(UVPIF)
+			if(AFEIF0Buffer&0x20)
 			{
-				R_ErrFlag.OPEN = 0;
-				if(R_ErrFlag.ErrFlag == 0 )
+				UVPIF = 0;
+				if(b_SmokeShortDelayTime) // 短路之后延时判断低电
 				{
-				    PMOS_CTRL = 0;
+					return;
 				}
+				R_Battery_Percent = 0;
+				b_SmokeFlag = 0;
+				PWMCLKEN=1;
+				PMOS_CTRL = 1;
+				// if(R_ErrFlag.LB == 0)
+				// {
+				R_ErrFlag.LB = 1;
+				F_PlayLight(4);
+				// }
+	#ifdef _DEBUG_EVENT_
+	LOG_printf0("lowbat\n");
+	#endif
 			}
+		// 	else if (OTPIF)
+		// 	{
+		// 		AFEIF0 = 0;
+		// 		b_SmokeFlag = 0;
+		// 		// F_PlayLight(0);
+		// #ifdef _DEBUG_EVENT_
+		//    LOG_printf0("over temperate\n");
+		// #endif
+		// 	}
+			// else if(SMKTMOIF)
+			else if(AFEIF0Buffer&0x04)
+			{
+				SMKTMOIF = 0;
+				b_SmokeFlag = 0;
+				// PWMCLKEN=1;
+				// PMOS_CTRL = 1;
+				F_PlayLight(3);
+	#ifdef _DEBUG_EVENT_
+	LOG_printf0("smk overtime\n");
+	#endif
+			}
+			// else if(SMKOVERIF)
+			else  if(AFEIF0Buffer&0x02)
+			{
+				SMKOVERIF = 0;
+	// 			if(b_SmokeFlag && (b_PowerOn_Flag != 0x5A))
+	// 			{
+	// 			// F_PlayLight(2);
+	// 				R_Light_LoopTimes = 1;
+	// 				b_SmokeFlag = 0;
+	// #ifdef _DEBUG_EVENT_
+	// LOG_printf0("MIC OFF\n");
+	// #endif
+	// 			}
 
-#endif
-			if(R_ErrFlag.LB)		//低电
-			{
-			    F_PlayLight(4);
-				return;
 			}
-			else if (R_ErrFlag.HZ || R_ErrFlag.LZ)		//高阻或低阻
+			// else if(CAPSTARTIE) 
+			else if(AFEIF0Buffer&0x01)
 			{
-				PMOS_CTRL = 0;
-				R_ErrFlag.HZ = 0;
-				R_ErrFlag.LZ = 0;
+				CAPSTARTIE = 0;
+	// #ifdef _DEBUG_EVENT_
+	// LOG_printf0("SMKSTARTIF\n");
+	// #endif
+
+	#ifdef _BOMB_INOUT_DETECT_
+				if(b_Bomb_Online == 0)		//吸烟前开路
+				{
+					F_PlayLight(9);		//开路灯效
+					PMOS_CTRL = 1;
+					R_ErrFlag.OPEN = 1;
+					return;
+				}
+				else
+				{
+					R_ErrFlag.OPEN = 0;
+					if(R_ErrFlag.ErrFlag == 0 )
+					{
+						PMOS_CTRL = 0;
+					}
+				}
+
+	#endif
+				if(R_ErrFlag.LB)		//低电
+				{
+					F_PlayLight(4);
+					return;
+				}
+				else if (R_ErrFlag.HZ || R_ErrFlag.LZ)		//高阻或低阻
+				{
+					PMOS_CTRL = 0;
+					R_ErrFlag.HZ = 0;
+					R_ErrFlag.LZ = 0;
+				}
 			}
 		}
 	}
@@ -263,7 +280,13 @@ LOG_printf0("smk overtime\n");
 				R_Battery_Percent = Percent_Full;
 				b_ChargeFlag = 0;
 				if(!b_SmokeFlag) F_PlayLight(8);
-			}	
+			}
+			
+			if(blockFlag)
+			{
+				blockFlag =0;
+				F_PlayLight(10); 
+			}
 		}
 		// else if(CHGFULLIF) //充满 
 		else if(AFEIF1Buffer&0x04)

@@ -30,6 +30,7 @@
 #define _CONNECT(A,bit) __CONNECT(A, bit)
 
 #define D_8ms_200ms     200/8
+#define D_8ms_500ms     500/8
 #define D_8ms_600ms     600/8
 #define D_8ms_1S        1000/8
 #define D_8ms_2S        2000/8

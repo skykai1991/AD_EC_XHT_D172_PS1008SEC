@@ -21,6 +21,7 @@
 #include "smoke.h"
 #include "PS1008_Core.h"
 #include "mic.h"
+#include "key.h"
 //***************************************************************************************************
 __CONFIG(CONFIG0_SET);
 __CONFIG(CONFIG1_SET);
@@ -52,6 +53,7 @@ void main(void)
    R_EngCnt = D_SMOKE_PERCENT_TIME;
 
    b_PowerOn_Flag = 1; //上电标志
+   blockFlag =1;
    F_PlayLight(0);//上电显示
 	R_Sleep_Off = D_8ms_2S;
    R_ErrFlag.ErrFlag = 0;
@@ -75,6 +77,7 @@ void main(void)
       if(b_T8ms_Flag)//8ms event
       {
          b_T8ms_Flag = 0;
+         F_KEYInput();
          F_WorkSmoke();
          F_PlayLight_8ms();
          F_WorkCharge();
