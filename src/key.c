@@ -4,6 +4,7 @@
 * Description : 极简I/O扫描程序
 * Version：
 ***********************************************************************************************/
+#include "smoke.h"
 #include "key.h"
 #include "HardwareDef.h"
 #include "common.h"
@@ -21,7 +22,9 @@ u8 R_DebounceCntKEY = 4; //消抖计数
 
 u8 R_InputKeyRepeatTime = 0; //按键重复时间
 u8 R_InputKeyRepeatCount = 0; //按键重复计数
+u16 R_PreHeatTime = 0; //按键重复延时
 bit blockFlag;
+bit bPerHeatFlag;
 /**
  * @brief 处理按键输入的函数
  * 
@@ -78,29 +81,20 @@ void F_KEYInput(void)
                     blockFlag ^=1;    //开关机
                     F_PlayLight(10); 
                  }
-                                  
-                // if(bPerHeatFlag)
-                // {
-                //     F_StopSmoke();
-			    //     F_PlayLight(2);
-                // }
-                // else if(bChangePower)
-                // {
-                //     if(bCurrentPowerLevel<2) bCurrentPowerLevel++;
-                //     else bCurrentPowerLevel =0;
-
-                //     F_PlayLight(7);
-                // }
-                // else if((blockFlag ==0)&& (R_InputKeyRepeatCount<5))
-                // {
-                //      F_MicON(); 
-                // }
+                            
+                if(bPerHeatFlag)
+                {
+                    bPerHeatFlag =0;
+                    SOFTKEY =0;
+                    F_PlayLight(13);
+                }
             }
   //--------------------------------------------------------------   
         }
     }
 
     F_ChangeMode();
+    F_PreHeat();
 
 }
 
@@ -124,33 +118,66 @@ void F_ChangeMode(void)
 
 void F_PreHeat(void)
 {
-//     if((!R_InputKeyRepeatTime)&&(bPerHeatFlag==0) &&(blockFlag==0))
-//     { 
-// //     #ifdef __DEBUG__
-// //             GIE = 0;
-// //     printf("preheat\r\n");
-// //     GIE = 1;
-// // #endif 
-//         if((R_InputKeyRepeatCount ==2) && ((R_InputRecord & (1<<BIT_KEY))))
-//         {
-         
-//             R_InputKeyRepeatCount =0;
+    if((!R_InputKeyRepeatTime)&&(bPerHeatFlag==0) &&(blockFlag==0))
+    { 
+        if(R_InputKeyRepeatCount ==2)
+        {
+            R_InputKeyRepeatCount =0;
+            //吸烟前检测
+  	#ifdef _BOMB_INOUT_DETECT_
+				if(b_Bomb_Online == 0)		//吸烟前开路
+				{
+					F_PlayLight(9);		//开路灯效
+                    PWMCLKEN =1;
+					PMOS_CTRL = 1;
+					R_ErrFlag.OPEN = 1;
+					return;
+				}
+				else
+				{
+					R_ErrFlag.OPEN = 0;
+					if(R_ErrFlag.ErrFlag == 0 )
+					{
+                        PWMCLKEN =1;
+						PMOS_CTRL = 0;
+					}
+				}
+	#endif
+				if(R_ErrFlag.LB)		//低电
+				{
+					F_PlayLight(4);
+					return;
+				}
+				else if (R_ErrFlag.HZ || R_ErrFlag.LZ)		//高阻或低阻
+				{
+                    PWMCLKEN =1;
+					PMOS_CTRL = 0;
+					R_ErrFlag.HZ = 0;
+					R_ErrFlag.LZ = 0;
+				}
+             //-------------------
+   
+            bPerHeatFlag =1;
+            SOFTKEY =1;
+            R_PreHeatTime = D_8ms_6S;
+            R_Temp16_0 = MTP_INFO_RD(0x0B);
+            CONSET = ((u32)D_CV_SET_PRE / R_Temp16_0) / 2;
+            F_PlayLight(11);  // 预热显示
 
-//             bPerHeatFlag =1;
-//             F_MicON();
-//         }
+        }
+    }
 
-//         if(R_InputKeyRepeatCount ==3)
-//         {
-//              R_InputKeyRepeatCount =0;
-//             if(bCurrentPowerLevel<2) bCurrentPowerLevel++;
-//             else bCurrentPowerLevel =0;
-//              F_PlayLight(7);
-//         }
-//     }
-
-    // if(bPerHeatFlag && (!b_LightPlay_Flag))
-    // {
-    //      F_PlayLight(5);
-    // }
+    if(bPerHeatFlag)
+    {
+        if(R_PreHeatTime)
+        {
+            R_PreHeatTime--;
+            if(!R_PreHeatTime)
+            {
+                bPerHeatFlag =0;
+                SOFTKEY =0;
+                F_PlayLight(13);
+            }
+        }
+    }
 }

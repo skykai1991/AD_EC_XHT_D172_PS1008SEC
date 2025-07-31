@@ -18,7 +18,8 @@
         "setting.h": "c",
         "charge.h": "c",
         "common.h": "c",
-        "ps1008_core.h": "c"
+        "ps1008_core.h": "c",
+        "key.h": "c"
     }
 }
 }

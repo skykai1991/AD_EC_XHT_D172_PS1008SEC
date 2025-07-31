@@ -9,7 +9,7 @@
 #include "display_sentence.h"
 #include "usart.h"
 #include "setting.h"
-
+#include "key.h"
 bit b_InputCurrent = 0;   //单次扫描当前状态
 bit b_InputLast = 0;      //单次扫描上次状态
 bit b_InputRecord = 0;    //消抖后，按键的状态记录
@@ -52,7 +52,7 @@ void F_MICInput(void)
 // LOG_printf2("key %x,%x\r\n",R_InputPress,R_InputRelease);
 // GIE = 1;
 // #endif
-            if(b_InputPress)
+            if(b_InputPress &&(!bPerHeatFlag))
             {                      //MIC ON
 			    b_SmokeFlag = 1;
 #ifdef _RV_DET_SMKING_
@@ -67,6 +67,8 @@ LOG_printf0("MIC ON\n");
     //-------------------------------------   
             if(b_InputRelease)
             {                      //mic off
+                SOFTKEY =0;
+                TMOMUX =0;
                 if(b_SmokeFlag)
                 {
                     b_SmokeFlag = 0;

@@ -35,6 +35,8 @@
 #define D_8ms_1S        1000/8
 #define D_8ms_2S        2000/8
 #define D_8ms_5S        5000/8
+#define D_8ms_6S        6000/8
+#define D_8ms_8S        8000/8
 #define D_8ms_20S       20000/8
 
 /************************GLOBAL VARIABLES********************/

@@ -25,6 +25,7 @@
 #include "PS1008_Core.h"
 #include "PS1008_DEF.h"
 #include "key.h"
+#include "mic.h"
 union ByteType_ErrFlag  R_ErrFlag;
 #ifdef _BOMB_INOUT_DETECT_
 bit b_Bomb_Online;		// 1: have bomb  0: no bomb
@@ -32,6 +33,7 @@ bit b_Bomb_Online;		// 1: have bomb  0: no bomb
 bit b_SmokeFlag;		// 1:smoking     0:not smoke;
 unsigned char b_SmokeShortDelayTime=0;	
 // bit b_HLR_Flag=0;
+unsigned short R_SmokeSoftTimeOverTime;
 void F_SMK_Init(void)
 {
     AFECLKEN = 1;
@@ -140,6 +142,7 @@ void F_AFE_Event(void)
 			if(AFEIF0Buffer&0x80)
 			{
 				SCPIF = 0;
+				bPerHeatFlag =0;
 				b_SmokeShortDelayTime =D_8ms_2S;
 				F_PlayLight(5);
 	#ifdef _DEBUG_EVENT_
@@ -152,6 +155,7 @@ void F_AFE_Event(void)
 			if(AFEIF0Buffer&0x40)
 			{
 				OCPIF = 0;
+				bPerHeatFlag =0;
 				b_SmokeShortDelayTime =D_8ms_2S;
 				F_PlayLight(5);
 				return;
@@ -167,6 +171,7 @@ void F_AFE_Event(void)
 				}
 				R_Battery_Percent = 0;
 				b_SmokeFlag = 0;
+				bPerHeatFlag =0;
 				PWMCLKEN=1;
 				PMOS_CTRL = 1;
 				// if(R_ErrFlag.LB == 0)
@@ -222,6 +227,26 @@ void F_AFE_Event(void)
 	// LOG_printf0("SMKSTARTIF\n");
 	// #endif
 
+				R_Temp16_0 = MTP_INFO_RD(0x0B);
+				if(R_Mode==1)  CONSET = ((u32)D_CV_SET_1 / R_Temp16_0) / 2;
+				else if(R_Mode ==2) CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
+				else if(R_Mode ==3) CONSET = ((u32)D_CV_SET_3 / R_Temp16_0) / 2;
+       //----------------------------
+				// if(bPerHeatFlag)
+				// {
+				// 	bPerHeatFlag =0;
+				// 	SOFTKEY =0;
+				// 	F_PlayLight(13);
+				// 	return;
+				// }
+				if(bPerHeatFlag)
+				{
+					bPerHeatFlag =0;
+					TMOMUX =1;
+					b_InputCurrent =0;
+					b_InputRecord_Last =0;
+					R_SmokeSoftTimeOverTime =D_8ms_8S;
+				}
 	#ifdef _BOMB_INOUT_DETECT_
 				if(b_Bomb_Online == 0)		//吸烟前开路
 				{
@@ -269,6 +294,7 @@ void F_AFE_Event(void)
 		if(AFEIF1Buffer&0x08)
 		{
 			CHGINIF =0;
+			bPerHeatFlag =0;
 			Recharge(0);
 			if(R_Battery_Percent < Percent_Full)	//充电插入
 			{
@@ -379,6 +405,19 @@ void F_WorkSmoke(void)
 {
 	if(b_SmokeFlag/* && b_Bomb_Online */)
 	{
+      //--软件超时计算---
+	  if(TMOMUX)
+	  {
+		if(R_SmokeSoftTimeOverTime)
+		{
+			R_SmokeSoftTimeOverTime--;
+			if(!R_SmokeSoftTimeOverTime)
+			{
+				STMOEN =1;// 软件超时
+			}
+		}
+	  }
+
 //吸烟油量计算
         if(R_OilCnt) R_OilCnt--;
 		if(!R_OilCnt)
@@ -450,6 +489,7 @@ void F_SmokingRV_Det(void)
 						if(Res_OUT < 750)				//低阻
 						{
 							b_SmokeFlag = 0;
+							bPerHeatFlag = 0;
 							PWMCLKEN=1;
 							PMOS_CTRL = 1;
 							R_ErrFlag.LZ = 1;

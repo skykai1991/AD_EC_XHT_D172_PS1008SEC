@@ -6,8 +6,10 @@
 
 extern void F_KEYInput(void);
 extern void F_ChangeMode(void);
+extern void F_PreHeat(void);
 // extern bit b_InputRecord_LastKEY;
 // extern bit b_InputCurrentKEY;
 extern bit blockFlag;
+extern bit bPerHeatFlag;
 extern  u8 R_InputKeyRepeatTime; 
 #endif

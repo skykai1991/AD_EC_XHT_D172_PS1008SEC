@@ -89,8 +89,7 @@ const u8 Light11[]={    // 预热开启
     M_SHOW_NUM(ICON_Oil,4,1000),
     M_SHOW_NUM(ICON_Oil,3,1000),
     M_SHOW_NUM(ICON_Oil,2,1000),
-    M_SHOW_NUM(ICON_Oil,1,1000),
-    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000), // 预热结束
+    M_SHOW_NUM(ICON_Oil,1,1100),
     DISPLAY_END
     };
  const u8 Light12[]={    // 档位切换 
@@ -98,6 +97,11 @@ const u8 Light11[]={    // 预热开启
     DISPLAY_END
     };   
 
+ const u8 Light13[]={    // 档位切换 
+    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000), // 预热结束
+    DISPLAY_END
+    };  
+
 // ===========灯效总表===========
-const u8* LightTab[13]={Light0,Light1,Light2,Light3,Light4,Light5,Light6,Light7,Light8,Light9,Light10,Light11,Light12};
+const u8* LightTab[14]={Light0,Light1,Light2,Light3,Light4,Light5,Light6,Light7,Light8,Light9,Light10,Light11,Light12,Light13};
 

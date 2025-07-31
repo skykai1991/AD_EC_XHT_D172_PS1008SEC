@@ -26,15 +26,15 @@
 #ifndef _USART_H_
 #define _USART_H_
 
-volatile unsigned char	USART_BUF @0x21;	//RAM的地址
-volatile bit D0			@ ((unsigned)&USART_BUF*8)+0;
-volatile bit D1			@ ((unsigned)&USART_BUF*8)+1;
-volatile bit D2			@ ((unsigned)&USART_BUF*8)+2;
-volatile bit D3			@ ((unsigned)&USART_BUF*8)+3;
-volatile bit D4			@ ((unsigned)&USART_BUF*8)+4;
-volatile bit D5			@ ((unsigned)&USART_BUF*8)+5;
-volatile bit D6			@ ((unsigned)&USART_BUF*8)+6;
-volatile bit D7			@ ((unsigned)&USART_BUF*8)+7;
+// volatile unsigned char	USART_BUF @0x21;	//RAM的地址
+// volatile bit D0			@ ((unsigned)&USART_BUF*8)+0;
+// volatile bit D1			@ ((unsigned)&USART_BUF*8)+1;
+// volatile bit D2			@ ((unsigned)&USART_BUF*8)+2;
+// volatile bit D3			@ ((unsigned)&USART_BUF*8)+3;
+// volatile bit D4			@ ((unsigned)&USART_BUF*8)+4;
+// volatile bit D5			@ ((unsigned)&USART_BUF*8)+5;
+// volatile bit D6			@ ((unsigned)&USART_BUF*8)+6;
+// volatile bit D7			@ ((unsigned)&USART_BUF*8)+7;
 
 #define TX_DIR TRISB1
 #define TX_PIN PB1
