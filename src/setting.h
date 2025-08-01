@@ -27,10 +27,10 @@
 
 #ifdef  _SMOKE_CTRL_CONST_VOLTAGE_
 	#define D_CV_SET		2900000		//恒压值设置，3.2V对应3200000
-	#define D_CV_SET_1		2800000		
-	#define D_CV_SET_2		2900000		
-	#define D_CV_SET_3		3000000		
-	#define D_CV_SET_PRE	1800000		
+	#define D_CV_SET_1		2900000		
+	#define D_CV_SET_2		3000000		
+	#define D_CV_SET_3		3100000		
+	#define D_CV_SET_PRE	1900000		
 	#define  OPMOD_SET  OPMOD_CONST_VOLTAGE
 #endif
 #ifdef  _SMOKE_CTRL_CONST_RMS_

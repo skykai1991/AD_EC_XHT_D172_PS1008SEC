@@ -100,7 +100,7 @@ void F_KEYInput(void)
 
 void F_ChangeMode(void)
 {
-    if((!R_InputKeyRepeatTime)&&(R_InputKeyRepeatCount ==3))  // 调节挡位
+    if((!R_InputKeyRepeatTime)&&(R_InputKeyRepeatCount ==3)&&(blockFlag==0))  // 调节挡位
     { 
        R_InputKeyRepeatCount =0;
        R_Mode++;
