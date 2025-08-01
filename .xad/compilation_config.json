@@ -1,1 +1,1 @@
-{"XADtemplate":"AD1008","ProjName":"ADC","OutputName":"AD1008SEC_DemoCode.hex","OutputPath":"./output","LanguageType":"C","Clear_bss":true,"Initialize_data":true,"Keep_generated_startup_as":false,"Calibrate_oscilator":true,"Codeoffset":"","RAMranges":"","ROMranges":"","Createlib":false}
+{"XADtemplate":"AD1008","ProjName":"ADC","OutputName":"PS1008SEC_D172_V1.x.x.hex","OutputPath":"./output","LanguageType":"C","Clear_bss":true,"Initialize_data":true,"Keep_generated_startup_as":false,"Calibrate_oscilator":true,"Codeoffset":"","RAMranges":"","ROMranges":"","Createlib":false}
