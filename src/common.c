@@ -67,14 +67,14 @@ void F_System_Init(void)
 void F_Work_PowerOff(void)
 {
     if((R_Sleep_Off||b_SmokeShortDelayTime||R_InputKeyRepeatTime || b_SmokeFlag || b_ChargeFlag || b_LightPlay_Flag || SMKINGS)) return;
-    // if(b_PowerOn_Flag == 1)
-    // {
-    //     b_PowerOn_Flag = 0;
-    //     //重新计算电池电压和电量
-    //     F_VADC_Sample_VBAT();
-    //     F_CalculateEneryPercent();
-    //     R_Battery_Percent = R_Temp0;
-    // }
+    if(b_PowerOn_Flag == 1)
+    {
+        b_PowerOn_Flag = 0;
+        //重新计算电池电压和电量
+        F_VADC_Sample_VBAT();
+        F_CalculateEneryPercent();
+        R_Battery_Percent = R_Temp0;
+    }
 
 #ifdef _DEBUG_EVENT_
      LOG_printf0("power off\n");
