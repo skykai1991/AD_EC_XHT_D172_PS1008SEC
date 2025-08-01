@@ -54,7 +54,7 @@ const u8 Light5[]={    //短路
     DISPLAY_END
     };
 const u8 Light6[]={    //充电中
-    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,1000),
+    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,10000),
     DISPLAY_END
     };
 

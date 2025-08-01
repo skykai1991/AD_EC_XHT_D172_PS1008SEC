@@ -142,6 +142,7 @@ void F_AFE_Event(void)
 			if(AFEIF0Buffer&0x80)
 			{
 				SCPIF = 0;
+				b_SmokeFlag =0;
 				bPerHeatFlag =0;
 				b_SmokeShortDelayTime =D_8ms_2S;
 				F_PlayLight(5);
@@ -155,6 +156,7 @@ void F_AFE_Event(void)
 			if(AFEIF0Buffer&0x40)
 			{
 				OCPIF = 0;
+				b_SmokeFlag =0;
 				bPerHeatFlag =0;
 				b_SmokeShortDelayTime =D_8ms_2S;
 				F_PlayLight(5);

@@ -82,7 +82,7 @@
 #define  D_V2T_PCT	90		//90%电量前，充电时以电压计算电量，90%电量以上，以时间计算电量；
 
 //时间计算电量时，每增加1%需要的计时时间
-#define D_Time_1PCT		120		//6*10s = 2分钟加1%
+#define D_Time_1PCT		12		//6*10s = 2分钟加1%
 
 //满油秒数定义，Unit:秒；
 #define D_FullOil 2000			
