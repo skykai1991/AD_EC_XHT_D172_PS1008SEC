@@ -65,14 +65,14 @@ void main(void)
    while(1)
    {
       CLRWDT();
-      if(b_T1_Flag)//1ms 定时
+      if(b_T1_Flag)//500us 定时
       {
          b_T1_Flag = 0;
-         F_MICInput();
-         F_SmokingRV_Det();
          M_SegTube_Init
          b_SegTubeScanReq = 1;
          if(b_SegTubeEn && b_SegTubeScanReq)   F_SegTubeScan();  
+         F_MICInput();
+         F_SmokingRV_Det();
       }
       if(b_T8ms_Flag)//8ms event
       {
@@ -121,7 +121,7 @@ void interrupt ISR(void)
    {
       T1IF = 0;
       b_T1_Flag = 1;
-      if(!(R_T1_cnt++ & 0x07)) b_T8ms_Flag = 1;
+      if(!(R_T1_cnt++ & 0x0F)) b_T8ms_Flag = 1;
    } 
 
    if((PBIE == 1)&&(PBIF == 1)) //PortB 的中断

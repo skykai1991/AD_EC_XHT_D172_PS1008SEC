@@ -191,7 +191,7 @@ void Timer0_Init(void)
 			 Time = （0XFF-[TMR0]+1）*{PS2:PS0}*2/Fsys；//TMR0设定初值
 
 ====================================T1 1ms计时===================================================*/
-#define Freq_Timer1     1000 //1ms
+#define Freq_Timer1     2000 //500us
 void Timer1_Init(void)
 {
     TMR1CLKEN  = 1;

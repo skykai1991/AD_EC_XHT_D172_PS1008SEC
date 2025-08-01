@@ -69,7 +69,6 @@ void F_SegTubeScan(void)
         F_SegTubeScan_P53;
         F_SegTubeScan_P54;
         TRIS_SEGTUBE_P5_ON();
-
     default:
         R_OLED_Scan_Cnt =0xFF;
         break;
