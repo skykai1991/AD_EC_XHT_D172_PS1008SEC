@@ -66,6 +66,7 @@ void F_KEYInput(void)
     //-------------------------------------   
             if(b_InputReleaseKEY) // 低电平有效
             {                      
+                R_Sleep_Off = D_8ms_600ms; 
                 if(R_InputKeyRepeatTime)
                 {
                    R_InputKeyRepeatCount++;

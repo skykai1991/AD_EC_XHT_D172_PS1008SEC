@@ -23,6 +23,7 @@
 #include "PS1008_DEF.h"
 #include "HardwareDef.h"
 #include "setting.h"
+#include "key.h"
 u8  R_T1_cnt = 0;
 /*电量相关变量*/
 u8 R_Battery_Percent;//转成百分比的电池电量值,最大100, 最小0
@@ -65,7 +66,7 @@ void F_System_Init(void)
 }
 void F_Work_PowerOff(void)
 {
-    if((R_Sleep_Off||b_SmokeShortDelayTime || b_SmokeFlag || b_ChargeFlag || b_LightPlay_Flag || SMKINGS)) return;
+    if((R_Sleep_Off||b_SmokeShortDelayTime||R_InputKeyRepeatTime || b_SmokeFlag || b_ChargeFlag || b_LightPlay_Flag || SMKINGS)) return;
     // if(b_PowerOn_Flag == 1)
     // {
     //     b_PowerOn_Flag = 0;
@@ -97,7 +98,7 @@ void F_Work_PowerOff(void)
     KEYIF=0;
 
     CAPSTARTIE=1; //吸烟启动中断
-    SMKSTARTIF=0;
+    CAPSTARTIF=0;
 
 #ifdef _BOMB_INOUT_DETECT_
     CIGRMVIE=1; //烟弹移除中断使能,如需要烟弹拨出检测，必须要打开烟弹拨出中断，才能产生中断和查询CIGRMVIF

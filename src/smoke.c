@@ -200,9 +200,9 @@ void F_AFE_Event(void)
 	// 			}
 
 			}
-			else if(CAPSTARTIE) //else if(AFEIF0Buffer&0x01)
+			else if(CAPSTARTIF) //else if(AFEIF0Buffer&0x01)
 			{
-				CAPSTARTIE = 0;
+				CAPSTARTIF = 0;
 				R_Sleep_Off = D_8ms_600ms; 
 	
 				R_Temp16_0 = MTP_INFO_RD(0x0B);

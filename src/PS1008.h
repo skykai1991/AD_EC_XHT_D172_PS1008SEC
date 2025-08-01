@@ -264,7 +264,7 @@ static volatile bit	 PWMIF                        @((unsigned)&AFEIF0*8)+4;
 static volatile bit	 OTPIF                        @((unsigned)&AFEIF0*8)+3;
 static volatile bit	 SMKTMOIF                     @((unsigned)&AFEIF0*8)+2;
 static volatile bit	 SMKOVERIF                    @((unsigned)&AFEIF0*8)+1;
-static volatile bit	 SMKSTARTIF                   @((unsigned)&AFEIF0*8)+0;
+static volatile bit	 CAPSTARTIF                   @((unsigned)&AFEIF0*8)+0;
 
 
 static volatile unsigned char	AFEIF1                  @0x8d;
