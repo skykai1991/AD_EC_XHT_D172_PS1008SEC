@@ -110,15 +110,13 @@ void F_SMK_Init(void)
     OCPIE = 0;
     OCPIF = 0;
 }
-unsigned char AFEIF0Buffer = 0;
-unsigned char AFEIF1Buffer = 0;
+// unsigned char AFEIF0Buffer = 0;
+// unsigned char AFEIF1Buffer = 0;
 void F_AFE_Event(void)
 {
 	//AFEIF0 查询处理
 	if(AFEIF0)
 	{
-		AFEIF0Buffer = AFEIF0;
-		AFEIF0 = 0;
 		if(blockFlag)
 		{
 			AFEIF0 =0;
@@ -132,14 +130,8 @@ void F_AFE_Event(void)
 				PWMCLKEN=1;
 				PMOS_CTRL = 0; //开MOS
 			}
-		
 
-		F_DebugUart_Dis();      
-		usart_init();           
-		printf("AFEIF0=%x,\n",AFEIF0Buffer);   
-		F_DebugUart_En();
-			// if (SCPIF)
-			if(AFEIF0Buffer&0x80)
+			if (SCPIF)//if(AFEIF0Buffer&0x80)
 			{
 				SCPIF = 0;
 				b_SmokeFlag =0;
@@ -152,8 +144,7 @@ void F_AFE_Event(void)
 				return;
 			}
 
-			// if(OCPIF)
-			if(AFEIF0Buffer&0x40)
+			if(OCPIF)//if(AFEIF0Buffer&0x40)
 			{
 				OCPIF = 0;
 				b_SmokeFlag =0;
@@ -163,8 +154,7 @@ void F_AFE_Event(void)
 				return;
 			}
 			
-			// if(UVPIF)
-			if(AFEIF0Buffer&0x20)
+			if(UVPIF)//if(AFEIF0Buffer&0x20)
 			{
 				UVPIF = 0;
 				if(b_SmokeShortDelayTime) // 短路之后延时判断低电
@@ -185,17 +175,7 @@ void F_AFE_Event(void)
 	LOG_printf0("lowbat\n");
 	#endif
 			}
-		// 	else if (OTPIF)
-		// 	{
-		// 		AFEIF0 = 0;
-		// 		b_SmokeFlag = 0;
-		// 		// F_PlayLight(0);
-		// #ifdef _DEBUG_EVENT_
-		//    LOG_printf0("over temperate\n");
-		// #endif
-		// 	}
-			// else if(SMKTMOIF)
-			else if(AFEIF0Buffer&0x04)
+			else if(SMKTMOIF)//else if(AFEIF0Buffer&0x04)
 			{
 				SMKTMOIF = 0;
 				b_SmokeFlag = 0;
@@ -206,8 +186,7 @@ void F_AFE_Event(void)
 	LOG_printf0("smk overtime\n");
 	#endif
 			}
-			// else if(SMKOVERIF)
-			else  if(AFEIF0Buffer&0x02)
+			else if(SMKOVERIF)//else  if(AFEIF0Buffer&0x02)
 			{
 				SMKOVERIF = 0;
 	// 			if(b_SmokeFlag && (b_PowerOn_Flag != 0x5A))
@@ -221,14 +200,11 @@ void F_AFE_Event(void)
 	// 			}
 
 			}
-			// else if(CAPSTARTIE) 
-			else if(AFEIF0Buffer&0x01)
+			else if(CAPSTARTIE) //else if(AFEIF0Buffer&0x01)
 			{
 				CAPSTARTIE = 0;
-	// #ifdef _DEBUG_EVENT_
-	// LOG_printf0("SMKSTARTIF\n");
-	// #endif
-
+				R_Sleep_Off = D_8ms_600ms; 
+	
 				R_Temp16_0 = MTP_INFO_RD(0x0B);
 				if(R_Mode==1)  CONSET = ((u32)D_CV_SET_1 / R_Temp16_0) / 2;
 				else if(R_Mode ==2) CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
@@ -283,17 +259,17 @@ void F_AFE_Event(void)
 	}
 	
 //AFEIF1 查询处理
-	if(AFEIF1&0x7d)
+	
+	if(AFEIF1)// if(AFEIF1&0x7d)
 	{		    
 
-			AFEIF1Buffer = AFEIF1&0x7d;
-			AFEIF1 = 0;
-			F_DebugUart_Dis();      
-			usart_init();           
-			printf("               AFEIF1=%x,\n", AFEIF1Buffer);   
-			F_DebugUart_En();
-		// if(CHGINIF)
-		if(AFEIF1Buffer&0x08)
+			// AFEIF1Buffer = AFEIF1&0x7d;
+			// AFEIF1 = 0;
+			// F_DebugUart_Dis();      
+			// usart_init();           
+			// printf("               AFEIF1=%x,\n", AFEIF1Buffer);   
+			// F_DebugUart_En();
+		if(CHGINIF)//if(AFEIF1Buffer&0x08)
 		{
 			CHGINIF =0;
 			bPerHeatFlag =0;
@@ -317,8 +293,7 @@ void F_AFE_Event(void)
 				F_PlayLight(10); 
 			}
 		}
-		// else if(CHGFULLIF) //充满 
-		else if(AFEIF1Buffer&0x04)
+		else if(CHGFULLIF)//else if(AFEIF1Buffer&0x04)//充满 
 		{
 			CHGFULLIF =0;
 			Recharge(1);
@@ -329,8 +304,7 @@ void F_AFE_Event(void)
 				if(!b_SmokeFlag) F_PlayLight(8);				
 			}
 		}
-		// else if(CHGRMVIF) // USB拔出
-		else if(AFEIF1Buffer&0x01)
+		else if(CHGRMVIF)//else if(AFEIF1Buffer&0x01)// USB拔出
 		{
 			CHGRMVIF =0;
 			Recharge(0);
@@ -338,8 +312,7 @@ void F_AFE_Event(void)
 			if(!b_SmokeFlag) F_PlayLight(7);
 		}
 
-		// if(CIGINIF)
-		if(AFEIF1Buffer&0x10)
+		if(CIGINIF)//if(AFEIF1Buffer&0x10)
 		{
 			CIGINIF = 0;
 			CIGPUR= 0;  
@@ -351,8 +324,7 @@ void F_AFE_Event(void)
 // #endif
 #endif
 		}
-		// else if(CIGRMVIF)
-		else if(AFEIF1Buffer&0x20)
+		else if(CIGRMVIF)//else if(AFEIF1Buffer&0x20)
 		{
 			CIGRMVIF = 0;
 			CIGPUR= 1; 
@@ -368,26 +340,6 @@ void F_AFE_Event(void)
 		if(KEYIF)
 		{
 			KEYIF = 0;
-// 			if(b_SmokeFlag && PB0)
-// 			{
-// 			// F_PlayLight(2);
-// 				R_Light_LoopTimes = 1;
-// 				b_SmokeFlag = 0;
-// #ifdef _DEBUG_EVENT_
-// LOG_printf0("KEY OFF\n");
-// #endif
-// 			}
-// 			else if(!(b_SmokeFlag || PB0))
-// 			{
-// 				b_SmokeFlag = 1;
-// #ifdef _RV_DET_SMKING_
-// 				b_CheckRing_Flag = 0;
-// #endif
-// 				F_PlayLight(1);
-// #ifdef _DEBUG_EVENT_
-// LOG_printf0("KEY ON\n");
-// #endif
-// 			}
 		}
 	}
 
