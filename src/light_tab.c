@@ -97,8 +97,8 @@ const u8 Light11[]={    // 预热开启
     DISPLAY_END
     };   
 
- const u8 Light13[]={    // 档位切换 
-    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000), // 预热结束
+ const u8 Light13[]={     // 预热结束
+    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000),
     DISPLAY_END
     };  
 

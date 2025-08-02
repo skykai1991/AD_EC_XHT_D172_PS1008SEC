@@ -136,6 +136,7 @@ void F_AFE_Event(void)
 				SCPIF = 0;
 				b_SmokeFlag =0;
 				bPerHeatFlag =0;
+				SOFTKEY =0;
 				b_SmokeShortDelayTime =D_8ms_2S;
 				F_PlayLight(5);
 	#ifdef _DEBUG_EVENT_
@@ -149,6 +150,7 @@ void F_AFE_Event(void)
 				OCPIF = 0;
 				b_SmokeFlag =0;
 				bPerHeatFlag =0;
+				SOFTKEY =0;
 				b_SmokeShortDelayTime =D_8ms_2S;
 				F_PlayLight(5);
 				return;
@@ -164,6 +166,7 @@ void F_AFE_Event(void)
 				R_Battery_Percent = 0;
 				b_SmokeFlag = 0;
 				bPerHeatFlag =0;
+				SOFTKEY =0;
 				PWMCLKEN=1;
 				PMOS_CTRL = 1;
 				// if(R_ErrFlag.LB == 0)
@@ -189,6 +192,7 @@ void F_AFE_Event(void)
 			else if(SMKOVERIF)//else  if(AFEIF0Buffer&0x02)
 			{
 				SMKOVERIF = 0;
+				SOFTKEY =0;
 	// 			if(b_SmokeFlag && (b_PowerOn_Flag != 0x5A))
 	// 			{
 	// 			// F_PlayLight(2);
@@ -273,6 +277,7 @@ void F_AFE_Event(void)
 		{
 			CHGINIF =0;
 			bPerHeatFlag =0;
+			SOFTKEY =0;
 			Recharge(0);
 			if(R_Battery_Percent < Percent_Full)	//充电插入
 			{
@@ -340,6 +345,57 @@ void F_AFE_Event(void)
 		if(KEYIF)
 		{
 			KEYIF = 0;
+			if(SOFTKEY) //吸烟
+			{
+				R_Sleep_Off = D_8ms_600ms; 
+			// F_DebugUart_Dis();      
+			// usart_init();           
+			// printf("KEY: bPerHeatFlag=%x,\n", bPerHeatFlag);   
+			// F_DebugUart_En();     
+				R_Temp16_0 = MTP_INFO_RD(0x0B);
+	            if(bPerHeatFlag)
+				{
+					CONSET = ((u32)D_CV_SET_PRE / R_Temp16_0) / 2;
+
+				}
+				else
+				{
+					if(R_Mode==1)  CONSET = ((u32)D_CV_SET_1 / R_Temp16_0) / 2;
+					else if(R_Mode ==2) CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
+					else if(R_Mode ==3) CONSET = ((u32)D_CV_SET_3 / R_Temp16_0) / 2;				
+				}
+				
+	#ifdef _BOMB_INOUT_DETECT_
+				if(b_Bomb_Online == 0)		//吸烟前开路
+				{
+					F_PlayLight(9);		//开路灯效
+					PMOS_CTRL = 1;
+					R_ErrFlag.OPEN = 1;
+					return;
+				}
+				else
+				{
+					R_ErrFlag.OPEN = 0;
+					if(R_ErrFlag.ErrFlag == 0 )
+					{
+						PMOS_CTRL = 0;
+					}
+				}
+
+	#endif
+	       //----------------------------
+				if(R_ErrFlag.LB)		//低电
+				{
+					F_PlayLight(4);
+					return;
+				}
+				else if (R_ErrFlag.HZ || R_ErrFlag.LZ)		//高阻或低阻
+				{
+					PMOS_CTRL = 0;
+					R_ErrFlag.HZ = 0;
+					R_ErrFlag.LZ = 0;
+				}
+			}
 		}
 	}
 

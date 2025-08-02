@@ -24,7 +24,7 @@ bit b_LightPlay_Flag;
 u16 R_Light_Time_Cnt = 0;
 u8 R_Light_LoopTimes = 0;
 u8 R_Light_LoopCnt_ADDR = 0;
-extern  const u8* LightTab[16];
+extern  const u8* LightTab[14];
 // ==================================
 void F_PlayLight(u8 LightIdx)
 {
@@ -37,10 +37,10 @@ void F_PlayLight(u8 LightIdx)
 #ifdef _DEBUG_EVENT_
 LOG_printf1("F_PlayLight,%d\r\n",R_Light_Idx);
 #endif
-	// F_DebugUart_Dis();      
-    // usart_init();           
-    // printf("F_PlayLight,%d\r\n",R_Light_Idx);   
-    // F_DebugUart_En();
+	F_DebugUart_Dis();      
+    usart_init();           
+    printf("F_PlayLight,%d\r\n",R_Light_Idx);   
+    F_DebugUart_En();
 }
 void F_SegTubeDecode(void)
 {

@@ -52,13 +52,21 @@ void F_MICInput(void)
 // LOG_printf2("key %x,%x\r\n",R_InputPress,R_InputRelease);
 // GIE = 1;
 // #endif
-            if(b_InputPress &&(!bPerHeatFlag))
+            if(b_InputPress)
             {                      //MIC ON
 			    b_SmokeFlag = 1;
 #ifdef _RV_DET_SMKING_
                 b_CheckRing_Flag = 0;
 #endif
-			    F_PlayLight(1);
+			    if(bPerHeatFlag)
+                {
+                    F_PlayLight(11);  // 预热显示
+                }
+                else
+                {
+                    F_PlayLight(1); // 吸烟显示
+                }
+                
 #ifdef _DEBUG_EVENT_
 LOG_printf0("MIC ON\n");
 #endif
@@ -72,7 +80,15 @@ LOG_printf0("MIC ON\n");
                 if(b_SmokeFlag)
                 {
                     b_SmokeFlag = 0;
-                    F_PlayLight(2);
+                    if(bPerHeatFlag)
+                    {
+                        bPerHeatFlag =0;
+                        F_PlayLight(13); // 预热结束
+                    }
+                    else
+                    {
+                        F_PlayLight(2); // 吸烟结束 
+                    }
 #ifdef _DEBUG_EVENT_
 LOG_printf0("MIC OFF\n");
 #endif

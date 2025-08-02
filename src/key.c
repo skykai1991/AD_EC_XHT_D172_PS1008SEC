@@ -11,6 +11,9 @@
 #include "display_sentence.h"
 #include "setting.h"
 #include "PS1008_Core.h"
+#include "mic.h"
+#include "smoke.h"
+#include "usart.h"
 bit b_InputCurrentKEY = 0;   //单次扫描当前状态
 bit b_InputLastKEY = 0;      //单次扫描上次状态
 bit b_InputRecordKEY = 0;    //消抖后，按键的状态记录
@@ -60,13 +63,16 @@ void F_KEYInput(void)
 
             if(b_InputPressKEY) // 高电平有效
             { 
-                     
+                SOFTKEY =0;      
             }
 
     //-------------------------------------   
             if(b_InputReleaseKEY) // 低电平有效
             {                      
                 R_Sleep_Off = D_8ms_600ms; 
+
+               if(!blockFlag) SOFTKEY =1;  
+
                 if(R_InputKeyRepeatTime)
                 {
                    R_InputKeyRepeatCount++;
@@ -85,9 +91,11 @@ void F_KEYInput(void)
                             
                 if(bPerHeatFlag)
                 {
-                    bPerHeatFlag =0;
-                    SOFTKEY =0;
-                    F_PlayLight(13);
+                    bPerHeatFlag =0; //预热结束
+                    TMOMUX =1; 
+                    b_InputCurrent =0;
+					b_InputRecord_Last =0;
+                    R_SmokeSoftTimeOverTime =D_8ms_8S;
                 }
             }
   //--------------------------------------------------------------   
@@ -130,52 +138,19 @@ void F_ChangeMode(void)
 
 void F_PreHeat(void)
 {
-    if((!R_InputKeyRepeatTime)&&(bPerHeatFlag==0) &&(blockFlag==0))
+    if((!R_InputKeyRepeatTime)&&(bPerHeatFlag==0) &&(blockFlag==0)&&(b_InputRecordKEY==1))
     { 
         if(R_InputKeyRepeatCount ==2)
         {
             R_InputKeyRepeatCount =0;
             //吸烟前检测
-  	#ifdef _BOMB_INOUT_DETECT_
-				if(b_Bomb_Online == 0)		//吸烟前开路
-				{
-					F_PlayLight(9);		//开路灯效
-                    PWMCLKEN =1;
-					PMOS_CTRL = 1;
-					R_ErrFlag.OPEN = 1;
-					return;
-				}
-				else
-				{
-					R_ErrFlag.OPEN = 0;
-					if(R_ErrFlag.ErrFlag == 0 )
-					{
-                        PWMCLKEN =1;
-						PMOS_CTRL = 0;
-					}
-				}
-	#endif
-				if(R_ErrFlag.LB)		//低电
-				{
-					F_PlayLight(4);
-					return;
-				}
-				else if (R_ErrFlag.HZ || R_ErrFlag.LZ)		//高阻或低阻
-				{
-                    PWMCLKEN =1;
-					PMOS_CTRL = 0;
-					R_ErrFlag.HZ = 0;
-					R_ErrFlag.LZ = 0;
-				}
-             //-------------------
-   
             bPerHeatFlag =1;
             SOFTKEY =1;
             R_PreHeatTime = D_8ms_6S;
-            R_Temp16_0 = MTP_INFO_RD(0x0B);
-            CONSET = ((u32)D_CV_SET_PRE / R_Temp16_0) / 2;
-            F_PlayLight(11);  // 预热显示
-
+      		// F_DebugUart_Dis();      
+			// usart_init();           
+			// printf("PreHeat Start: SOFTKEY=%x,\n", SOFTKEY);   
+			// F_DebugUart_En();      
         }
     }
 
@@ -186,9 +161,7 @@ void F_PreHeat(void)
             R_PreHeatTime--;
             if(!R_PreHeatTime)
             {
-                bPerHeatFlag =0;
                 SOFTKEY =0;
-                F_PlayLight(13);
             }
         }
     }
