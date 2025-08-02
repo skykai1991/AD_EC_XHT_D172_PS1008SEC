@@ -51,10 +51,19 @@ void main(void)
    F_CalculateEneryPercent();
    R_Battery_Percent = R_Temp0;
    R_EngCnt = D_SMOKE_PERCENT_TIME;
-
+   if(CHGENS&&CHGFULLS==0)
+   {
+      b_ChargeFlag = 1;
+      blockFlag =0;
+		F_PlayLight(6);
+		F_Start_SampBAT();
+   }
+   else
+   {
+      F_PlayLight(0);//上电显示  
+      blockFlag =1;
+   }
    b_PowerOn_Flag = 1; //上电标志
-   blockFlag =1;
-   F_PlayLight(0);//上电显示
 	R_Sleep_Off = D_8ms_2S;
    R_ErrFlag.ErrFlag = 0;
       
