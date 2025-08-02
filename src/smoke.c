@@ -131,6 +131,11 @@ void F_AFE_Event(void)
 				PMOS_CTRL = 0; //开MOS
 			}
 
+			// F_DebugUart_Dis();      
+			// usart_init();           
+			// printf("AFEIF0=%x,\n",AFEIF0);   
+			// F_DebugUart_En();
+
 			if (SCPIF)//if(AFEIF0Buffer&0x80)
 			{
 				SCPIF = 0;
@@ -271,7 +276,7 @@ void F_AFE_Event(void)
 			// AFEIF1 = 0;
 			// F_DebugUart_Dis();      
 			// usart_init();           
-			// printf("               AFEIF1=%x,\n", AFEIF1Buffer);   
+			// printf("               AFEIF1=%x,\n", AFEIF1&0x7d);   
 			// F_DebugUart_En();
 		if(CHGINIF)//if(AFEIF1Buffer&0x08)
 		{
@@ -441,16 +446,20 @@ void F_WorkSmoke(void)
 		{
 			if(R_Battery_Percent > 1)R_Battery_Percent--;
 			R_EngCnt = D_SMOKE_PERCENT_TIME;
-			u8 i = 0;
-			u8 j = R_Battery_Percent;
-			while(j>=10)
+			if(!bPerHeatFlag)
 			{
-				j -=10;
-				i++;
+				u8 i = 0;
+				u8 j = R_Battery_Percent;
+				while(j>=10)
+				{
+					j -=10;
+					i++;
+				}
+				if(i == 0)i=10;     //十位灭0处理；
+				M_Show_Tenbit(i)
+				M_Show_Unitbit(j)
 			}
-			if(i == 0)i=10;     //十位灭0处理；
-			M_Show_Tenbit(i)
-			M_Show_Unitbit(j)
+
 		}
 	}
 

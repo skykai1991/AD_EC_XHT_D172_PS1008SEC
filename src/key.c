@@ -92,10 +92,16 @@ void F_KEYInput(void)
                 if(bPerHeatFlag)
                 {
                     bPerHeatFlag =0; //预热结束
+                    R_Temp16_0 = MTP_INFO_RD(0x0B);
+                    if(R_Mode==1)  CONSET = ((u32)D_CV_SET_1 / R_Temp16_0) / 2;
+                    else if(R_Mode ==2) CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
+                    else if(R_Mode ==3) CONSET = ((u32)D_CV_SET_3 / R_Temp16_0) / 2;
+                    
                     TMOMUX =1; 
                     b_InputCurrent =0;
 					b_InputRecord_Last =0;
                     R_SmokeSoftTimeOverTime =D_8ms_8S;
+
                 }
             }
   //--------------------------------------------------------------   
