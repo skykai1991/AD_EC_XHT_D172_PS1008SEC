@@ -77,11 +77,11 @@ void F_KEYInput(void)
                 }
                
                  R_InputKeyRepeatTime = D_8ms_500ms; 
-                 if(R_InputKeyRepeatCount ==5)
-                 {
-                    blockFlag ^=1;    //开关机
-                    F_PlayLight(10); 
-                 }
+                //  if(R_InputKeyRepeatCount ==5)
+                //  {
+                //     blockFlag ^=1;    //开关机
+                //     F_PlayLight(10); 
+                //  }
                             
                 if(bPerHeatFlag)
                 {
@@ -93,10 +93,21 @@ void F_KEYInput(void)
   //--------------------------------------------------------------   
         }
     }
+    F_Switch(); //开关机
+    F_ChangeMode();//挡位
+    F_PreHeat();//预热
 
-    F_ChangeMode();
-    F_PreHeat();
+}
 
+void F_Switch(void) //开关机
+{
+    if((!R_InputKeyRepeatTime)&&(R_InputKeyRepeatCount >=5))  // 开关机
+    {
+        R_InputKeyRepeatCount =0;
+        blockFlag ^=1;    //开关机
+        SOFTKEY =0;
+        F_PlayLight(10); 
+    }
 }
 
 void F_ChangeMode(void)

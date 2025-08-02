@@ -7,6 +7,7 @@
 extern void F_KEYInput(void);
 extern void F_ChangeMode(void);
 extern void F_PreHeat(void);
+extern void F_Switch(void);
 // extern bit b_InputRecord_LastKEY;
 // extern bit b_InputCurrentKEY;
 extern bit blockFlag;
