@@ -70,8 +70,8 @@ void main(void)
    OSCCON = FINTOSC_1 + CKOE_DIS + OSC_HIGH;
    WDTEN = 1;
    M_SMKORIG
-   if(CIGN) b_Bomb_Online =1;
-   else b_Bomb_Online =0;
+   if(CIGN) {b_Bomb_Online =1; CIGPUR =0;}
+   else {b_Bomb_Online =0;CIGPUR=1;}
    
    GIE = 1;
    while(1)
