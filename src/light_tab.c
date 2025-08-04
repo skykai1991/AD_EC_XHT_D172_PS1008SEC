@@ -41,7 +41,8 @@ const u8 Light3[]={    //过吸
     };
 const u8 Light4[]={    //欠压
     M_LOOP_START(8),
-    M_SHOW_NUM(         ICON_PCT,NUM_BY_Bat,200),
+    // M_SHOW_NUM(         ICON_PCT,NUM_BY_Bat,200),
+    M_SEGTUBE_SCREENOFF(200),
     M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,200),
     M_LOOP_END,
     DISPLAY_END
