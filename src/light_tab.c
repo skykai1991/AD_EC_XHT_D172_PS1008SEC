@@ -67,7 +67,7 @@ const u8 Light7[]={    //充电解除
     DISPLAY_END
     };
 const u8 Light8[]={    //充满
-    M_SEGTUBE_SCREENOFF(10),
+    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000),
     DISPLAY_END
     };
 const u8 Light9[]={     //开路
