@@ -24,7 +24,7 @@ bit b_LightPlay_Flag;
 u16 R_Light_Time_Cnt = 0;
 u8 R_Light_LoopTimes = 0;
 u8 R_Light_LoopCnt_ADDR = 0;
-extern  const u8* LightTab[14];
+extern  const u8* LightTab[15];
 // ==================================
 void F_PlayLight(u8 LightIdx)
 {

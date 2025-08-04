@@ -289,19 +289,29 @@ void F_AFE_Event(void)
 				b_ChargeFlag = 1;
 				if(!b_SmokeFlag) F_PlayLight(6);
 				F_Start_SampBAT();
+				if(blockFlag)
+				{
+					blockFlag =0;
+					F_PlayLight(10); 
+				}
 			}
 			else									//插入充满
 			{
 				R_Battery_Percent = Percent_Full;
 				b_ChargeFlag = 0;
 				if(!b_SmokeFlag) F_PlayLight(8);
+				if(blockFlag)
+				{
+					blockFlag =0;
+					F_PlayLight(14);
+				}
 			}
 			
-			if(blockFlag)
-			{
-				blockFlag =0;
-				F_PlayLight(10); 
-			}
+			// if(blockFlag)
+			// {
+			// 	blockFlag =0;
+			// 	F_PlayLight(10); 
+			// }
 		}
 		else if(CHGFULLIF)//else if(AFEIF1Buffer&0x04)//充满 
 		{

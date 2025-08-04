@@ -102,7 +102,15 @@ const u8 Light11[]={    // 预热开启
     M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000),
     DISPLAY_END
     };  
+const u8 Light14[]={     // 先解锁 后充满
+    M_LOOP_START(2),
+    M_SEGTUBE_SCREENOFF(200),
+    M_NIXTETUBE_FULLSCREEN(200),
+    M_LOOP_END,
+    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000),
+    DISPLAY_END
+    };    
 
 // ===========灯效总表===========
-const u8* LightTab[14]={Light0,Light1,Light2,Light3,Light4,Light5,Light6,Light7,Light8,Light9,Light10,Light11,Light12,Light13};
+const u8* LightTab[15]={Light0,Light1,Light2,Light3,Light4,Light5,Light6,Light7,Light8,Light9,Light10,Light11,Light12,Light13,Light14};
 
