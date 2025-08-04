@@ -444,11 +444,14 @@ void F_WorkSmoke(void)
 	  }
 
 //吸烟油量计算
-        if(R_OilCnt) R_OilCnt--;
-		if(!R_OilCnt)
+		if(!bPerHeatFlag)  // 预热不掉油量
 		{
-			R_OilCnt =D_SMOKE_IOL_TIME;
-			if(R_Oil_Percent)R_Oil_Percent--;
+			if(R_OilCnt) R_OilCnt--;
+			if(!R_OilCnt)
+			{
+				R_OilCnt =D_SMOKE_IOL_TIME;
+				if(R_Oil_Percent)R_Oil_Percent--;
+			}
 		}
 //吸烟电量计算 每1%吸烟时长5s，电量1%后由欠压判断电量转为0%
 		if(R_EngCnt) R_EngCnt--; 

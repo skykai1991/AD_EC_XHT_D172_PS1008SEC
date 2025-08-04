@@ -26,11 +26,11 @@
 // #define _SMOKE_CTRL_CONST_POWER_		//恒功率输出
 
 #ifdef  _SMOKE_CTRL_CONST_VOLTAGE_
-	#define D_CV_SET		2900000		//恒压值设置，3.2V对应3200000
-	#define D_CV_SET_1		2800000		
-	#define D_CV_SET_2		2900000		
-	#define D_CV_SET_3		3000000		
-	#define D_CV_SET_PRE	1800000		
+	#define D_CV_SET		2940000		//恒压值设置，3.2V对应3200000
+	#define D_CV_SET_1		2840000		
+	#define D_CV_SET_2		2940000		
+	#define D_CV_SET_3		3040000		
+	#define D_CV_SET_PRE	1840000		
 	#define  OPMOD_SET  OPMOD_CONST_VOLTAGE
 #endif
 #ifdef  _SMOKE_CTRL_CONST_RMS_
@@ -56,7 +56,7 @@
 //以下配置吸烟中阻值检测和电压检测；
 #define _RV_DET_SMKING_
 //以下配置吸烟电量几少减1%；
-#define D_SMOKE_PERCENT_TIME	D_8ms_5S
+#define D_SMOKE_PERCENT_TIME	D_8ms_3_5s
 #define D_SMOKE_IOL_TIME	    11100/8    // 1% 的油量
 
 //以下上电及充电时电池电量曲线；

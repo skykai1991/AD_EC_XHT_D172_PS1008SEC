@@ -34,6 +34,7 @@
 #define D_8ms_600ms     600/8
 #define D_8ms_1S        1000/8
 #define D_8ms_2S        2000/8
+#define D_8ms_3_5s      3500/8
 #define D_8ms_5S        5000/8
 #define D_8ms_6S        6000/8
 #define D_8ms_8S        8000/8

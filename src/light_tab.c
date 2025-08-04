@@ -34,23 +34,23 @@ const u8 Light2[]={    //吸停
     };
 const u8 Light3[]={    //过吸
     M_LOOP_START(6),
-    M_SEGTUBE_SCREENOFF(200),
-    M_NIXTETUBE_FULLSCREEN(200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_NIXTETUBE_FULLSCREEN(250),
     M_LOOP_END,
     DISPLAY_END
     };
 const u8 Light4[]={    //欠压
     M_LOOP_START(8),
     // M_SHOW_NUM(         ICON_PCT,NUM_BY_Bat,200),
-    M_SEGTUBE_SCREENOFF(200),
-    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,250),
     M_LOOP_END,
     DISPLAY_END
     };
 const u8 Light5[]={    //短路
     M_LOOP_START(10),
-    M_SEGTUBE_SCREENOFF(200),
-    M_NIXTETUBE_FULLSCREEN(200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_NIXTETUBE_FULLSCREEN(250),
     M_LOOP_END,
     DISPLAY_END
     };
@@ -61,8 +61,8 @@ const u8 Light6[]={    //充电中
 
 const u8 Light7[]={    //充电解除
     M_LOOP_START(3),
-    M_SEGTUBE_SCREENOFF(200),
-    M_NIXTETUBE_FULLSCREEN(200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_NIXTETUBE_FULLSCREEN(250),
     M_LOOP_END,
     DISPLAY_END
     };
@@ -72,15 +72,15 @@ const u8 Light8[]={    //充满
     };
 const u8 Light9[]={     //开路
     M_LOOP_START(8),
-    M_SEGTUBE_SCREENOFF(200),
-    M_NIXTETUBE_FULLSCREEN(200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_NIXTETUBE_FULLSCREEN(250),
     M_LOOP_END,
     DISPLAY_END
     };
 const u8 Light10[]={    // 开关机 
     M_LOOP_START(2),
-    M_SEGTUBE_SCREENOFF(200),
-    M_NIXTETUBE_FULLSCREEN(200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_NIXTETUBE_FULLSCREEN(250),
     M_LOOP_END,
     DISPLAY_END
     };
@@ -104,8 +104,8 @@ const u8 Light11[]={    // 预热开启
     };  
 const u8 Light14[]={     // 先解锁 后充满
     M_LOOP_START(2),
-    M_SEGTUBE_SCREENOFF(200),
-    M_NIXTETUBE_FULLSCREEN(200),
+    M_SEGTUBE_SCREENOFF(250),
+    M_NIXTETUBE_FULLSCREEN(250),
     M_LOOP_END,
     M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,2000),
     DISPLAY_END
