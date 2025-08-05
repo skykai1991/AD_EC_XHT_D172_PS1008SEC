@@ -30,7 +30,7 @@ void F_MICInput(void)
 // #endif
     if(b_InputCurrent != b_InputLast)
     {
-        R_DebounceCnt = 2;
+        R_DebounceCnt = 6;
     }
     else if(R_DebounceCnt)
     {
@@ -75,7 +75,7 @@ LOG_printf0("MIC ON\n");
     //-------------------------------------   
             if(b_InputRelease)
             {                      //mic off
-                SOFTKEY =0;
+                // SOFTKEY =0;
                 TMOMUX =0;
                 if(b_SmokeFlag)
                 {

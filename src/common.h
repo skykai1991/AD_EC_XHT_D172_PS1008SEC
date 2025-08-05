@@ -23,7 +23,10 @@
 #include "commdef.h"
 #include "smoke.h"
 #include "setting.h"
-
+static volatile unsigned char	CAP_BASEL                    @0x98;
+static volatile unsigned char	CAP_BASEH                    @0x99;
+static volatile unsigned char	CAP_CNTL                     @0x9a;
+static volatile unsigned char	CAP_CNTH                     @0x9b;
 
 //下面两个宏联合起来,实现把A与B的宏值连在一起, 适用于从io的位号向IO位变量的转换
 #define __CONNECT(A,bit) A##bit

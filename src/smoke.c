@@ -15,6 +15,7 @@
 // 
 // 
 //===========================================================================================================
+#include "key.h"
 #include "smoke.h"
 #include "PS1008.h"
 #include "common.h"
@@ -24,7 +25,6 @@
 #include "charge.h"
 #include "PS1008_Core.h"
 #include "PS1008_DEF.h"
-#include "key.h"
 #include "mic.h"
 union ByteType_ErrFlag  R_ErrFlag;
 #ifdef _BOMB_INOUT_DETECT_
@@ -198,16 +198,27 @@ void F_AFE_Event(void)
 			{
 				SMKOVERIF = 0;
 				SOFTKEY =0;
-	// 			if(b_SmokeFlag && (b_PowerOn_Flag != 0x5A))
-	// 			{
-	// 			// F_PlayLight(2);
-	// 				R_Light_LoopTimes = 1;
-	// 				b_SmokeFlag = 0;
-	// #ifdef _DEBUG_EVENT_
-	// LOG_printf0("MIC OFF\n");
-	// #endif
-	// 			}
+				AFECLKEN =1;
+				unsigned short	CapBase = ((CAP_BASEH&0x3F)<<8) | CAP_BASEL;
+				unsigned short	CapCnt  = ((CAP_CNTH&0x3F)<<8) | CAP_CNTL;
 
+			// F_DebugUart_Dis();      
+			// usart_init();           
+			// printf("off=%d,%d,%d\n",PIN_KEY,CapBase,CapCnt);   
+			// F_DebugUart_En();
+			// __delay_ms(1);
+				__delay_us(500);
+                unsigned short  CapV =CapCnt+ (CapBase>>5);
+				if((PIN_KEY==0)||(CapBase>CapV)) 
+				{
+				    SOFTKEY =0;
+					__delay_us(500);  
+					SOFTKEY =1;
+				}
+				// else
+				// {
+				// 	SOFTKEY =0;
+				// }
 			}
 			else if(CAPSTARTIF) //else if(AFEIF0Buffer&0x01)
 			{
@@ -269,11 +280,9 @@ void F_AFE_Event(void)
 	
 //AFEIF1 查询处理
 	
-	if(AFEIF1)// if(AFEIF1&0x7d)
+	if(AFEIF1)//	if(AFEIF1&0x7d)
 	{		    
 
-			// AFEIF1Buffer = AFEIF1&0x7d;
-			// AFEIF1 = 0;
 			// F_DebugUart_Dis();      
 			// usart_init();           
 			// printf("               AFEIF1=%x,\n", AFEIF1&0x7d);   
