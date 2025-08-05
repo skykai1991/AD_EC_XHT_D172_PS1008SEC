@@ -269,6 +269,7 @@ static volatile bit	 CAPSTARTIF                   @((unsigned)&AFEIF0*8)+0;
 
 static volatile unsigned char	AFEIF1                  @0x8d;
 /*Definitions for AFEIF1 register*/
+static volatile bit	 CAPIF                        @((unsigned)&AFEIF1*8)+7;
 static volatile bit	 KEYIF                        @((unsigned)&AFEIF1*8)+6;
 static volatile bit	 CIGRMVIF                     @((unsigned)&AFEIF1*8)+5;
 static volatile bit	 CIGINIF                      @((unsigned)&AFEIF1*8)+4;

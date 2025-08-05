@@ -34,6 +34,7 @@ bit b_SmokeFlag;		// 1:smoking     0:not smoke;
 unsigned char b_SmokeShortDelayTime=0;	
 // bit b_HLR_Flag=0;
 unsigned short R_SmokeSoftTimeOverTime;
+bit bCapActive=0;
 void F_SMK_Init(void)
 {
     AFECLKEN = 1;
@@ -199,17 +200,19 @@ void F_AFE_Event(void)
 				SMKOVERIF = 0;
 				SOFTKEY =0;
 				AFECLKEN =1;
-				unsigned short	CapBase = ((CAP_BASEH&0x3F)<<8) | CAP_BASEL;
-				unsigned short	CapCnt  = ((CAP_CNTH&0x3F)<<8) | CAP_CNTL;
+				// unsigned short	CapBase = ((CAP_BASEH&0x3F)<<8) | CAP_BASEL;
+				// unsigned short	CapCnt  = ((CAP_CNTH&0x3F)<<8) | CAP_CNTL;
 
-			// F_DebugUart_Dis();      
-			// usart_init();           
-			// printf("off=%d,%d,%d\n",PIN_KEY,CapBase,CapCnt);   
-			// F_DebugUart_En();
-			// __delay_ms(1);
-				__delay_us(500);
-                unsigned short  CapV =CapCnt+ (CapBase>>5);
-				if((PIN_KEY==0)||(CapBase>CapV)) 
+				// F_DebugUart_Dis();      
+				// usart_init();           
+				// printf("off=%d,%d,%d\n",PIN_KEY,CapBase,CapCnt);   
+				// F_DebugUart_En();
+				// __delay_ms(1);
+				 __delay_us(500);
+                // unsigned short  CapV =CapCnt+ (CapBase>>5);
+				// if((PIN_KEY==0)||(CapBase>CapV)) 
+
+				if((PIN_KEY==0)||(bCapActive)) 
 				{
 				    SOFTKEY =0;
 					__delay_us(500);  
@@ -287,6 +290,24 @@ void F_AFE_Event(void)
 			// usart_init();           
 			// printf("               AFEIF1=%x,\n", AFEIF1&0x7d);   
 			// F_DebugUart_En();
+		if(CAPIF)
+		{
+			CAPIF=0;
+			if((CAP_VAL<0x1FF)&&(CAP_VAL>(CAP_BASE>>5)))
+			{
+				bCapActive =1;
+			}
+			else
+			{
+				bCapActive =0;
+			}
+			// F_DebugUart_Dis();      
+			// usart_init();           
+			// // printf("CapBase=%4x,CapCnt=%4x,CapVal=%4x,\n", CAP_BASE,CAP_CNT,CAP_VAL);   
+			// printf(",bCapActive=%x,\n", bCapActive);   
+			// F_DebugUart_En();
+		}
+
 		if(CHGINIF)//if(AFEIF1Buffer&0x08)
 		{
 			CHGINIF =0;
