@@ -107,9 +107,17 @@ void F_KEYInput(void)
   //--------------------------------------------------------------   
         }
     }
-    F_Switch(); //开关机
-    F_ChangeMode();//挡位
-    F_PreHeat();//预热
+    if(!b_UsbInFlag)
+    {
+        F_Switch(); //开关机
+        F_ChangeMode();//挡位
+        F_PreHeat();//预热
+    }
+    else
+    {
+        R_InputKeyRepeatCount =0;
+    }
+
 
 }
 
