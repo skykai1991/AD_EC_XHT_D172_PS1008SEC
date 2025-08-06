@@ -31,6 +31,7 @@ union ByteType_ErrFlag  R_ErrFlag;
 bit b_Bomb_Online;		// 1: have bomb  0: no bomb
 #endif
 bit b_SmokeFlag;		// 1:smoking     0:not smoke;
+bit b_UsbInFlag;
 unsigned char b_SmokeShortDelayTime=0;	
 // bit b_HLR_Flag=0;
 unsigned short R_SmokeSoftTimeOverTime;
@@ -207,7 +208,7 @@ void F_AFE_Event(void)
 			// printf("off=%d,%d,%d\n",PIN_KEY,CapBase,CapCnt);   
 			// F_DebugUart_En();
 			// __delay_ms(1);
-				__delay_us(500);
+				__delay_us(600);
                 unsigned short  CapV =CapCnt+ (CapBase>>5);
 				if((PIN_KEY==0)||(CapBase>CapV)) 
 				{
@@ -237,6 +238,25 @@ void F_AFE_Event(void)
 				// 	F_PlayLight(13);
 				// 	return;
 				// }
+
+				if(b_UsbInFlag)   // 关闭边冲边吸
+				{
+					// PWMCLKEN =1;
+					// PMOS_CTRL =1;//关MOS
+					SOFTKEY =1;
+					__delay_us(1100);
+					SOFTKEY =0;
+					return;
+				}
+				// else
+				// {
+				// 	if(R_ErrFlag.ErrFlag == 0 )
+				// 	{
+				// 		PWMCLKEN=1;
+				// 		PMOS_CTRL = 0; //开MOS
+				// 	}
+				// }
+
 				if(bPerHeatFlag)
 				{
 					bPerHeatFlag =0;
@@ -290,6 +310,7 @@ void F_AFE_Event(void)
 		if(CHGINIF)//if(AFEIF1Buffer&0x08)
 		{
 			CHGINIF =0;
+			b_UsbInFlag =1;
 			bPerHeatFlag =0;
 			SOFTKEY =0;
 			Recharge(0);
@@ -336,6 +357,7 @@ void F_AFE_Event(void)
 		else if(CHGRMVIF)//else if(AFEIF1Buffer&0x01)// USB拔出
 		{
 			CHGRMVIF =0;
+			b_UsbInFlag =0;
 			Recharge(0);
 			b_ChargeFlag =0;
 			if(!b_SmokeFlag) F_PlayLight(7);
@@ -388,7 +410,25 @@ void F_AFE_Event(void)
 					else if(R_Mode ==2) CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
 					else if(R_Mode ==3) CONSET = ((u32)D_CV_SET_3 / R_Temp16_0) / 2;				
 				}
-				
+
+				if(b_UsbInFlag)   // 关闭边冲边吸
+				{
+
+					// PWMCLKEN =1;
+					// PMOS_CTRL =1;//关MOS
+					SOFTKEY =0;
+					bPerHeatFlag =0;
+					return;
+				}
+				// else
+				// {
+				// 	if(R_ErrFlag.ErrFlag == 0 )
+				// 	{
+				// 		PWMCLKEN=1;
+				// 		PMOS_CTRL = 0; //开MOS
+				// 	}
+				// }
+
 	#ifdef _BOMB_INOUT_DETECT_
 				if(b_Bomb_Online == 0)		//吸烟前开路
 				{
