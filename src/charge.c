@@ -79,6 +79,7 @@ void F_WorkCharge(void)
 					F_PlayLight(6);
 				}
 			}
+			F_PlayLight_8ms();
 		}
 	}
 }
