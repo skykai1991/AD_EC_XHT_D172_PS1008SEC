@@ -61,7 +61,7 @@ void F_WorkCharge(void)
 			}
 			else
 			{
-				if((F_ADC2VBAT(R_ADC_VBAT) > 4200 ) || (++R_ChargingTimes >= D_Time_1PCT))			//10s *12 = 2minutes。充至91%后，每2分钟增加1%至满电；
+				if((CHGFULLS==1)||(F_ADC2VBAT(R_ADC_VBAT) > 4200 ) || (++R_ChargingTimes >= D_Time_1PCT))			//10s *12 = 2minutes。充至91%后，每2分钟增加1%至满电；
 				{
 					R_Battery_Percent++;
 					R_EngCnt = D_SMOKE_PERCENT_TIME;
