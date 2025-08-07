@@ -45,9 +45,11 @@ LOG_printf1("F_PlayLight,%d\r\n",R_Light_Idx);
 void F_SegTubeDecode(void)
 {
 	u8 R_Temp0,R_Temp1,i;
+	u8 disPlayMode;
+	disPlayMode =0;
 	R_Temp0 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
 	R_Temp1 = *(LightTab[R_Light_Idx] + R_Light_Cnt++);
- 
+    
 	R_Lcd_Buf0.buf = R_Temp0;   // 显示图标
     // 显示数字
     if(R_Temp1 == NUM_BY_Bat) //显示电池电量
@@ -61,6 +63,7 @@ void F_SegTubeDecode(void)
 	else if(R_Temp1 == NUM_BY_Mode) //显示挡位
     {
 		R_Temp1 = R_Mode;
+		disPlayMode =1;
     }
 	i=0;  
 	if(R_Temp1 >99)
@@ -76,7 +79,7 @@ void F_SegTubeDecode(void)
             R_Temp1 -=10;
             i++;
         }
-        if(i == 0)i=10;     //十位灭0处理；
+        if((disPlayMode==0) &&(i == 0))i=10;     //十位灭0处理；
         M_Show_Tenbit(i)
         M_Show_Unitbit(R_Temp1)
     }
