@@ -518,6 +518,7 @@ void F_WorkSmoke(void)
 					i++;
 				}
 				if(i == 0)i=10;     //十位灭0处理；
+				R_Lcd_Buf0.buf &= ~ICON_100;
 				M_Show_Tenbit(i)
 				M_Show_Unitbit(j)
 			}
