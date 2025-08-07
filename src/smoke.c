@@ -347,12 +347,17 @@ void F_AFE_Event(void)
 		{
 			CHGFULLIF =0;
 			Recharge(1);
-			if(b_ChargeFlag)
-			{
-				b_ChargeFlag = 0;
-				R_Battery_Percent = Percent_Full;
-				if(!b_SmokeFlag) F_PlayLight(8);				
-			}
+            // if(CHGFULLS)  // 充满
+			// {
+
+			// }
+
+			// if(b_ChargeFlag)
+			// {
+			// 	b_ChargeFlag = 0;
+			// 	R_Battery_Percent = Percent_Full;
+			// 	if(!b_SmokeFlag) F_PlayLight(8);				
+			// }
 		}
 		else if(CHGRMVIF)//else if(AFEIF1Buffer&0x01)// USB拔出
 		{
@@ -518,6 +523,7 @@ void F_WorkSmoke(void)
 					i++;
 				}
 				if(i == 0)i=10;     //十位灭0处理；
+				R_Lcd_Buf0.buf &= ~ICON_100;
 				M_Show_Tenbit(i)
 				M_Show_Unitbit(j)
 			}

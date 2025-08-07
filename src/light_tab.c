@@ -28,7 +28,7 @@ const u8 Light1[]={    //吸烟
     };
 const u8 Light2[]={    //吸停
     M_SHOW_NUM(ICON_Bat+ICON_PCT,NUM_BY_Bat,4000),
-    M_SHOW_NUM(0,NUM_BY_Mode,4000),
+    // M_SHOW_NUM(0,NUM_BY_Mode,4000),
     M_SHOW_NUM(ICON_Oil+ICON_PCT,NUM_BY_Oil,4000),
     DISPLAY_END
     };
