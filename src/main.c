@@ -57,11 +57,15 @@ void main(void)
       blockFlag =0;
 		F_PlayLight(6);
 		F_Start_SampBAT();
+      b_FirstUsbInFlag =0;
+      b_PowerOn_Flag = 0; //上电标志
    }
    else
    {
       F_PlayLight(0);//上电显示  
       blockFlag =1;
+      b_FirstUsbInFlag =1;
+      b_PowerOn_Flag = 1; //上电标志
    }
    b_PowerOn_Flag = 1; //上电标志
 	R_Sleep_Off = D_8ms_2S;

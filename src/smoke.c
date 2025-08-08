@@ -32,6 +32,7 @@ bit b_Bomb_Online;		// 1: have bomb  0: no bomb
 #endif
 bit b_SmokeFlag;		// 1:smoking     0:not smoke;
 bit b_UsbInFlag;
+bit b_FirstUsbInFlag;
 unsigned char b_SmokeShortDelayTime=0;	
 // bit b_HLR_Flag=0;
 unsigned short R_SmokeSoftTimeOverTime;
@@ -314,6 +315,15 @@ void F_AFE_Event(void)
 			bPerHeatFlag =0;
 			SOFTKEY =0;
 			Recharge(0);
+			if(b_FirstUsbInFlag == 1)
+			{
+				b_FirstUsbInFlag = 0;
+				//重新计算电池电压和电量
+				F_VADC_Sample_VBAT();
+				F_CalculateEneryPercent();
+				R_Battery_Percent = R_Temp0;
+			}
+
 			if(R_Battery_Percent < Percent_Full)	//充电插入
 			{
 				b_ChargeFlag = 1;
