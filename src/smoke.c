@@ -89,9 +89,9 @@ void F_SMK_Init(void)
 	F_UVP_VOLT_Setting(UVL_3_3V);
 //设置输出电压或功率
 #ifdef  _SMOKE_CTRL_CONST_VOLTAGE_
-	R_Mode =2;
+	R_Mode =1;
 	R_Temp16_0 = MTP_INFO_RD(0x0B);
-    CONSET = ((u32)D_CV_SET_2 / R_Temp16_0) / 2;
+    CONSET = ((u32)D_CV_SET_1 / R_Temp16_0) / 2;
 #endif
 #ifdef  _SMOKE_CTRL_CONST_RMS_
 	R_Temp16_0 = MTP_INFO_RD(0x0B);
